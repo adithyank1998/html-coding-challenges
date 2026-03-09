@@ -1,4 +1,4 @@
-# 🔥 30-Day HTML Challenge
+# 30-Day HTML Challenge
 
 > Building one HTML/CSS/JS project every day for 30 days to sharpen frontend skills and grow my GitHub profile.
 
@@ -21,8 +21,8 @@ Each project lives in its own folder with a dedicated README and live GitHub Pag
 
 | Day | Challenge | Difficulty | Status | Live Demo |
 |-----|-----------|------------|--------|-----------|
-| 01 | Animated Hero Section | 🟢 Beginner | ⬜ Todo | [Demo](#) |
-| 02 | Responsive Nav Bar | 🟢 Beginner | ⬜ Todo | [Demo](#) |
+| 01 | Animated Hero Section | 🟢 Beginner | ✅ Todo | [Demo](/Day-01-Animated-Hero-Section/) |
+| 02 | Responsive Nav Bar | 🟢 Beginner | ✅ Todo | [Demo](#) |
 | 03 | CSS Card Flip | 🟢 Beginner | ⬜ Todo | [Demo](#) |
 | 04 | Custom Range Slider | 🟢 Beginner | ⬜ Todo | [Demo](#) |
 | 05 | Dark / Light Mode Toggle | 🟢 Beginner | ⬜ Todo | [Demo](#) |
@@ -52,7 +52,7 @@ Each project lives in its own folder with a dedicated README and live GitHub Pag
 | 29 | Canvas Particle System | 🔴 Advanced | ⬜ Todo | [Demo](#) |
 | 30 | Full Portfolio Page | 🔴 Advanced | ⬜ Todo | [Demo](#) |
 
-> Update status to ✅ Done as you complete each day!
+✅
 
 ---
 
@@ -72,21 +72,6 @@ Each project lives in its own folder with a dedicated README and live GitHub Pag
 └── ... (repeat for all 30 days)
 ```
 
----
-
-## How to Run Locally
-
-No build tools or installs needed. Just:
-
-```bash
-git clone https://github.com/YOUR_USERNAME/30-day-html-challenge.git
-cd 30-day-html-challenge/day-01-animated-hero
-open index.html
-```
-
-Or simply drag any `index.html` file into your browser.
-
----
 
 ## Tech Stack
 
@@ -113,12 +98,7 @@ Day 02 — Responsive Nav Bar ✅
 
 `html` `css` `javascript` `frontend` `portfolio` `30-day-challenge` `web-development` `css-animations` `vanilla-js`
 
----
-
-## License
-
-MIT — feel free to use any of these projects as inspiration or starting points.
 
 ---
 
-*Started: 07/03/2026 · **Built in public**
+*Started: 07/03/2026 · 

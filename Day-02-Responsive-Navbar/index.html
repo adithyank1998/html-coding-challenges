@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 02 — Responsive Navbar</title>
+<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600&family=Instrument+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #060608;
+    --surface: #0f0f14;
+    --border: rgba(255,255,255,0.07);
+    --text: #f0f0f5;
+    --muted: #6b6b80;
+    --lime: #c8f04c;
+    --lime-dim: rgba(200,240,76,0.12);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Instrument Sans', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ─── NAVBAR ─── */
+  .nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    padding: 0 40px;
+    height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(6,6,8,0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    transition: background 0.3s, box-shadow 0.3s;
+  }
+
+  /* Navbar gets more opaque on scroll */
+  .nav.scrolled {
+    background: rgba(6,6,8,0.95);
+    box-shadow: 0 4px 40px rgba(0,0,0,0.4);
+  }
+
+  /* Logo */
+  .nav-logo {
+    font-family: 'Clash Display', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 1001;
+  }
+
+  .logo-dot {
+    width: 8px; height: 8px;
+    background: var(--lime);
+    border-radius: 50%;
+    display: inline-block;
+    animation: blink 2.5s ease infinite;
+  }
+
+  @keyframes blink {
+    0%, 90%, 100% { opacity: 1; }
+    95% { opacity: 0; }
+  }
+
+  /* Desktop links */
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 7px 14px;
+    border-radius: 6px;
+    transition: color 0.2s, background 0.2s;
+    letter-spacing: 0.2px;
+  }
+
+  .nav-links a:hover {
+    color: var(--text);
+    background: rgba(255,255,255,0.06);
+  }
+
+  .nav-links a.active {
+    color: var(--lime);
+  }
+
+  /* CTA button in nav */
+  .nav-cta {
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--bg) !important;
+    background: var(--lime) !important;
+    padding: 8px 18px !important;
+    border-radius: 6px !important;
+    transition: opacity 0.2s, transform 0.2s !important;
+  }
+
+  .nav-cta:hover {
+    opacity: 0.88 !important;
+    transform: translateY(-1px) !important;
+    background: var(--lime) !important;
+  }
+
+  /* ─── HAMBURGER BUTTON ─── */
+  .hamburger {
+    display: none; /* hidden on desktop */
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 40px; height: 40px;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 9px;
+    z-index: 1001;
+    transition: border-color 0.2s;
+  }
+
+  .hamburger:hover { border-color: rgba(255,255,255,0.2); }
+
+  /* The 3 lines */
+  .hamburger span {
+    display: block;
+    width: 100%;
+    height: 1.5px;
+    background: var(--text);
+    border-radius: 2px;
+    transition: transform 0.35s cubic-bezier(.4,0,.2,1),
+                opacity 0.35s ease,
+                width 0.35s ease;
+    transform-origin: center;
+  }
+
+  /* Animate lines into X when open */
+  .hamburger.open span:nth-child(1) {
+    transform: translateY(6.5px) rotate(45deg);
+  }
+  .hamburger.open span:nth-child(2) {
+    opacity: 0;
+    width: 0;
+  }
+  .hamburger.open span:nth-child(3) {
+    transform: translateY(-6.5px) rotate(-45deg);
+  }
+
+  /* ─── MOBILE MENU ─── */
+  .mobile-menu {
+    display: none; /* only shown on mobile */
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--bg);
+    z-index: 999;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 80px 40px 40px;
+
+    /* Hidden state */
+    opacity: 0;
+    transform: translateY(-16px);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .mobile-menu.open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: all;
+  }
+
+  .mobile-menu a {
+    font-family: 'Clash Display', sans-serif;
+    font-size: clamp(2rem, 8vw, 3.2rem);
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: -1px;
+    transition: color 0.2s, transform 0.2s;
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+  }
+
+  .mobile-menu a:hover {
+    color: var(--text);
+    transform: translateX(6px);
+  }
+
+  .mobile-menu .mobile-cta {
+    margin-top: 24px;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--bg);
+    background: var(--lime);
+    padding: 14px 48px;
+    border-radius: 8px;
+    letter-spacing: 0;
+    transform: none;
+  }
+
+  .mobile-menu .mobile-cta:hover {
+    opacity: 0.88;
+    transform: translateY(-2px) !important;
+  }
+
+  /* Mobile menu bottom social links */
+  .mobile-socials {
+    position: absolute;
+    bottom: 40px;
+    display: flex;
+    gap: 24px;
+  }
+
+  .mobile-socials a {
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 12px !important;
+    letter-spacing: 2px !important;
+    text-transform: uppercase;
+    color: var(--muted) !important;
+    padding: 0 !important;
+    width: auto !important;
+    transform: none !important;
+  }
+
+  .mobile-socials a:hover {
+    color: var(--lime) !important;
+    transform: none !important;
+  }
+
+  /* Staggered entrance for mobile links */
+  .mobile-menu a {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease, color 0.2s;
+  }
+
+  .mobile-menu.open a:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0.05s; }
+  .mobile-menu.open a:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 0.10s; }
+  .mobile-menu.open a:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 0.15s; }
+  .mobile-menu.open a:nth-child(4) { opacity: 1; transform: translateY(0); transition-delay: 0.20s; }
+  .mobile-menu.open a:nth-child(5) { opacity: 1; transform: translateY(0); transition-delay: 0.25s; }
+  .mobile-menu.open a:nth-child(6) { opacity: 1; transform: translateY(0); transition-delay: 0.30s; }
+
+  /* ─── PAGE CONTENT (demo sections) ─── */
+  .hero-section {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 100px 40px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Background grid */
+  .hero-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+  }
+
+  .section-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--lime);
+    border: 1px solid rgba(200,240,76,0.25);
+    background: var(--lime-dim);
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 28px;
+  }
+
+  .hero-section h1 {
+    font-family: 'Clash Display', sans-serif;
+    font-size: clamp(2.8rem, 7vw, 6rem);
+    font-weight: 600;
+    letter-spacing: -2px;
+    line-height: 1;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .hero-section h1 span { color: var(--lime); }
+
+  .hero-section p {
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 480px;
+    line-height: 1.7;
+    margin-bottom: 40px;
+  }
+
+  .demo-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .btn {
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 12px 28px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn-filled {
+    background: var(--lime);
+    color: var(--bg);
+  }
+  .btn-filled:hover { opacity: 0.85; transform: translateY(-2px); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .btn-outline:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+  /* Demo page sections */
+  .demo-section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid var(--border);
+    padding: 80px 40px;
+  }
+
+  .demo-section h2 {
+    font-family: 'Clash Display', sans-serif;
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 500;
+    letter-spacing: -1.5px;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .demo-section h2 span { color: var(--text); }
+
+  /* Day badge */
+  .day-badge {
+    position: fixed;
+    bottom: 28px; right: 28px;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 20px;
+    z-index: 500;
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    .nav { padding: 0 20px; }
+    .nav-links { display: none; } /* hide desktop links */
+    .hamburger { display: flex; } /* show hamburger */
+    .mobile-menu { display: flex; } /* enable mobile menu */
+
+    .hero-section { padding: 100px 24px 60px; }
+    .demo-section { padding: 60px 24px; }
+
+    .day-badge { bottom: 16px; right: 16px; }
+  }
+
+  @media (max-width: 480px) {
+    .nav { height: 60px; }
+    .mobile-socials { bottom: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── NAVBAR ─── -->
+<nav class="nav" id="navbar">
+  <a href="#" class="nav-logo">
+    <span class="logo-dot"></span>
+    ResponsiveNav
+  </a>
+
+  <!-- Desktop navigation links -->
+  <ul class="nav-links">
+    <li><a href="#home" class="active">Home</a></li>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#blog">Blog</a></li>
+    <li><a href="#contact" class="nav-cta">Let's talk</a></li>
+  </ul>
+
+  <!-- Hamburger button (mobile only) -->
+  <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+</nav>
+
+<!-- ─── MOBILE MENU ─── -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#home"    onclick="closeMenu()">Home</a>
+  <a href="#work"    onclick="closeMenu()">Work</a>
+  <a href="#about"   onclick="closeMenu()">About</a>
+  <a href="#blog"    onclick="closeMenu()">Blog</a>
+  <a href="#contact" onclick="closeMenu()" class="mobile-cta">Let's talk</a>
+
+  <div class="mobile-socials">
+    <a href="#">Twitter</a>
+    <a href="#">GitHub</a>
+    <a href="#">LinkedIn</a>
+  </div>
+</div>
+
+<!-- ─── PAGE SECTIONS (to demonstrate sticky navbar) ─── -->
+<section class="hero-section" id="home">
+  <div class="section-badge">Day 02 · Responsive Navbar</div>
+  <h1>Build things<br>people <span>love.</span></h1>
+  <p>Resize this window or open on your phone to see the navbar collapse into a hamburger menu. Click it to open the full-screen mobile nav.</p>
+  <div class="demo-buttons">
+    <a href="#work" class="btn btn-filled">See my work</a>
+    <a href="#about" class="btn btn-outline">About me</a>
+  </div>
+</section>
+
+<section class="demo-section" id="contact">
+  <h2>Let's <span>talk</span><br>get in touch</h2>
+</section>
+
+<div class="day-badge">Day 02 / 30</div>
+
+<script>
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const navbar = document.getElementById('navbar');
+
+  // ── Toggle mobile menu open/close
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+
+    // Prevent body scroll when menu is open
+    document.body.style.overflow =
+      mobileMenu.classList.contains('open') ? 'hidden' : '';
+  });
+
+  // ── Close menu (called by onclick on each link)
+  function closeMenu() {
+    hamburger.classList.remove('open');
+    mobileMenu.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // ── Close menu on Escape key
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeMenu();
+  });
+
+  // ── Navbar becomes more opaque when scrolled
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 20);
+  });
+
+  // ── Highlight active nav link based on scroll position
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+
+    sections.forEach(section => {
+      // If we've scrolled past the top of this section
+      if (window.scrollY >= section.offsetTop - 100) {
+        current = section.getAttribute('id');
+      }
+    });
+
+    navLinks.forEach(link => {
+      link.classList.remove('active');
+      if (link.getAttribute('href') === '#' + current) {
+        link.classList.add('active');
+      }
+    });
+  });
+</script>
+</body>
+</html>
