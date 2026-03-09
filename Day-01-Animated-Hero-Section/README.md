@@ -1,6 +1,6 @@
 # Day 01 — Animated Hero Section
 
-![Preview](preview.png)
+![Preview](Preview.png)
 
 ## Challenge
 
