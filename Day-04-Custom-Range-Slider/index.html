@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 04 — Custom Range Slider</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Manrope:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #f4f5f9;
+    --surface: #ffffff;
+    --surface2: #eceef5;
+    --border: rgba(0,0,0,0.08);
+    --text: #13141a;
+    --muted: #8a8fa8;
+    --cyan: #0099aa;
+    --pink: #e0185a;
+    --amber: #c47d00;
+    --violet: #7c22d4;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Manrope', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px 80px;
+    gap: 48px;
+  }
+
+  /* ── Header ── */
+  header {
+    text-align: center;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .day-tag {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--cyan);
+    border: 1px solid rgba(0,153,170,0.3);
+    padding: 4px 14px;
+    border-radius: 2px;
+    margin-bottom: 16px;
+  }
+
+  header h1 {
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    font-weight: 700;
+    letter-spacing: -1px;
+    line-height: 1.1;
+  }
+
+  header p {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 10px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Slider cards container ── */
+  .sliders-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 580px;
+    animation: fadeUp 0.7s ease 0.15s both;
+  }
+
+  /* ── Single slider card ── */
+  .slider-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 32px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  }
+
+  .slider-card:hover { border-color: rgba(0,0,0,0.18); box-shadow: 0 4px 20px rgba(0,0,0,0.07); }
+
+  .slider-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+  }
+
+  .slider-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.2px;
+  }
+
+  .slider-sublabel {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 3px;
+    letter-spacing: 0.5px;
+  }
+
+  /* The big live value display */
+  .slider-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 2rem;
+    font-weight: 500;
+    line-height: 1;
+    transition: color 0.3s;
+  }
+
+  .slider-unit {
+    font-size: 0.9rem;
+    opacity: 0.5;
+    margin-left: 2px;
+  }
+
+  /* ── The track + thumb wrapper ── */
+  .slider-track-wrap {
+    position: relative;
+    height: 36px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* ── The filled progress bar behind the input ── */
+  .slider-fill {
+    position: absolute;
+    left: 0;
+    height: 4px;
+    border-radius: 2px;
+    pointer-events: none;
+    transition: width 0.05s;
+  }
+
+  /* ── The native range input — fully restyled ── */
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--surface2);
+    outline: none;
+    cursor: pointer;
+    position: relative;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 3px solid #ffffff;
+    cursor: grab;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.12),
+                0 4px 12px rgba(0,0,0,0.18);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:active {
+    cursor: grabbing;
+    transform: scale(1.2);
+    box-shadow: 0 0 0 4px rgba(0,0,0,0.06),
+                0 4px 16px rgba(0,0,0,0.22);
+  }
+
+  /* Firefox thumb */
+  input[type="range"]::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 3px solid #ffffff;
+    cursor: grab;
+  }
+
+  /* Each slider gets its own accent color */
+  .slider-cyan  input[type="range"]::-webkit-slider-thumb { background: var(--cyan); }
+  .slider-pink  input[type="range"]::-webkit-slider-thumb { background: var(--pink); }
+  .slider-amber input[type="range"]::-webkit-slider-thumb { background: var(--amber); }
+  .slider-violet input[type="range"]::-webkit-slider-thumb { background: var(--violet); }
+
+  .slider-cyan  .slider-value { color: var(--cyan); }
+  .slider-pink  .slider-value { color: var(--pink); }
+  .slider-amber .slider-value { color: var(--amber); }
+  .slider-violet .slider-value { color: var(--violet); }
+
+  .slider-cyan  .slider-fill { background: var(--cyan); }
+  .slider-pink  .slider-fill { background: var(--pink); }
+  .slider-amber .slider-fill { background: var(--amber); }
+  .slider-violet .slider-fill { background: var(--violet); }
+
+  /* Tick marks below slider */
+  .slider-ticks {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    padding: 0 2px;
+  }
+
+  .slider-ticks span {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Live preview card ── */
+  .preview-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 32px;
+    width: 100%;
+    max-width: 580px;
+    animation: fadeUp 0.7s ease 0.3s both;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  }
+
+  .preview-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  /* The visual result box — updates live */
+  .preview-box {
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.1s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .preview-box-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 500;
+    text-align: center;
+    letter-spacing: -0.5px;
+    transition: all 0.1s ease;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Stats row ── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .stat-key {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* ── Day badge ── */
+  .day-badge {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 4px;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    body { padding: 32px 16px 70px; gap: 32px; }
+    .slider-card, .preview-card { padding: 22px 20px; }
+    .slider-value { font-size: 1.6rem; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="day-tag">// DAY 04 / 30</div>
+  <h1>Custom Range Sliders</h1>
+  <p>// drag to update — live preview below</p>
+</header>
+
+<!-- ── SLIDERS ── -->
+<div class="sliders-wrap">
+
+  <!-- Slider 1: Size -->
+  <div class="slider-card slider-cyan">
+    <div class="slider-top">
+      <div>
+        <div class="slider-label">Font Size</div>
+        <div class="slider-sublabel">// typography scale</div>
+      </div>
+      <div class="slider-value" id="val-size">32<span class="slider-unit">px</span></div>
+    </div>
+    <div class="slider-track-wrap">
+      <div class="slider-fill" id="fill-size"></div>
+      <input type="range" id="slider-size" min="12" max="80" value="32"
+             oninput="updateSlider('size', this.value)">
+    </div>
+    <div class="slider-ticks">
+      <span>12px</span><span>28px</span><span>44px</span><span>60px</span><span>80px</span>
+    </div>
+  </div>
+
+  <!-- Slider 2: Opacity -->
+  <div class="slider-card slider-pink">
+    <div class="slider-top">
+      <div>
+        <div class="slider-label">Opacity</div>
+        <div class="slider-sublabel">// transparency level</div>
+      </div>
+      <div class="slider-value" id="val-opacity">80<span class="slider-unit">%</span></div>
+    </div>
+    <div class="slider-track-wrap">
+      <div class="slider-fill" id="fill-opacity"></div>
+      <input type="range" id="slider-opacity" min="10" max="100" value="80"
+             oninput="updateSlider('opacity', this.value)">
+    </div>
+    <div class="slider-ticks">
+      <span>10%</span><span>32%</span><span>55%</span><span>77%</span><span>100%</span>
+    </div>
+  </div>
+
+  <!-- Slider 3: Border Radius -->
+  <div class="slider-card slider-amber">
+    <div class="slider-top">
+      <div>
+        <div class="slider-label">Border Radius</div>
+        <div class="slider-sublabel">// corner roundness</div>
+      </div>
+      <div class="slider-value" id="val-radius">12<span class="slider-unit">px</span></div>
+    </div>
+    <div class="slider-track-wrap">
+      <div class="slider-fill" id="fill-radius"></div>
+      <input type="range" id="slider-radius" min="0" max="60" value="12"
+             oninput="updateSlider('radius', this.value)">
+    </div>
+    <div class="slider-ticks">
+      <span>0px</span><span>15px</span><span>30px</span><span>45px</span><span>60px</span>
+    </div>
+  </div>
+
+  <!-- Slider 4: Padding -->
+  <div class="slider-card slider-violet">
+    <div class="slider-top">
+      <div>
+        <div class="slider-label">Padding</div>
+        <div class="slider-sublabel">// inner spacing</div>
+      </div>
+      <div class="slider-value" id="val-padding">24<span class="slider-unit">px</span></div>
+    </div>
+    <div class="slider-track-wrap">
+      <div class="slider-fill" id="fill-padding"></div>
+      <input type="range" id="slider-padding" min="4" max="60" value="24"
+             oninput="updateSlider('padding', this.value)">
+    </div>
+    <div class="slider-ticks">
+      <span>4px</span><span>18px</span><span>32px</span><span>46px</span><span>60px</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── LIVE PREVIEW ── -->
+<div class="preview-card">
+  <div class="preview-label">// live preview</div>
+
+  <div class="preview-box" id="preview-box">
+    <div class="preview-box-text" id="preview-text">Hello, World!</div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat">
+      <div class="stat-val" id="stat-size" style="color: var(--cyan)">32px</div>
+      <div class="stat-key">font-size</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="stat-opacity" style="color: var(--pink)">80%</div>
+      <div class="stat-key">opacity</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="stat-radius" style="color: var(--amber)">12px</div>
+      <div class="stat-key">radius</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="stat-padding" style="color: var(--violet)">24px</div>
+      <div class="stat-key">padding</div>
+    </div>
+  </div>
+</div>
+
+<div class="day-badge">Day 04 / 30</div>
+
+<script>
+  // Store all current values
+  const state = {
+    size:    32,
+    opacity: 80,
+    radius:  12,
+    padding: 24
+  };
+
+  // Accent colors per slider
+  const colors = {
+    size:    'var(--cyan)',
+    opacity: 'var(--pink)',
+    radius:  'var(--amber)',
+    padding: 'var(--violet)'
+  };
+
+  // Min/max for each slider (for fill % calculation)
+  const ranges = {
+    size:    { min: 12,  max: 80  },
+    opacity: { min: 10,  max: 100 },
+    radius:  { min: 0,   max: 60  },
+    padding: { min: 4,   max: 60  }
+  };
+
+  function updateSlider(name, value) {
+    value = parseInt(value);
+    state[name] = value;
+
+    // 1. Update the big number display
+    document.getElementById('val-' + name).innerHTML =
+      value + '<span class="slider-unit">' + getUnit(name) + '</span>';
+
+    // 2. Update the stat in the preview section
+    document.getElementById('stat-' + name).textContent = value + getUnit(name);
+
+    // 3. Update the coloured fill bar width
+    const { min, max } = ranges[name];
+    const pct = ((value - min) / (max - min)) * 100;
+    const fill = document.getElementById('fill-' + name);
+    fill.style.width = pct + '%';
+
+    // 4. Update the live preview box
+    updatePreview();
+  }
+
+  function getUnit(name) {
+    if (name === 'opacity') return '%';
+    return 'px';
+  }
+
+  function updatePreview() {
+    const box  = document.getElementById('preview-box');
+    const text = document.getElementById('preview-text');
+
+    // Apply all slider values to the preview box
+    box.style.borderRadius = state.radius + 'px';
+    box.style.opacity      = state.opacity / 100;
+    box.style.padding      = state.padding + 'px';
+    box.style.minHeight    = (state.padding * 3) + 'px';
+
+    // Background: gradient using current colors
+    box.style.background = `linear-gradient(135deg,
+      rgba(0,153,170,0.10),
+      rgba(224,24,90,0.08),
+      rgba(196,125,0,0.08),
+      rgba(124,34,212,0.08)
+    )`;
+    box.style.border = '1px solid rgba(0,0,0,0.07)';
+
+    // Apply font size to the text
+    text.style.fontSize   = state.size + 'px';
+    text.style.lineHeight = '1.2';
+    text.style.color      = '#13141a';
+    text.style.fontFamily = "'IBM Plex Mono', monospace";
+    text.style.fontWeight = state.size > 40 ? '300' : '500';
+  }
+
+  // Initialise all fill bars on page load
+  function initFills() {
+    Object.keys(state).forEach(name => {
+      const { min, max } = ranges[name];
+      const pct = ((state[name] - min) / (max - min)) * 100;
+      document.getElementById('fill-' + name).style.width = pct + '%';
+    });
+    updatePreview();
+  }
+
+  initFills();
+</script>
+</body>
+</html>

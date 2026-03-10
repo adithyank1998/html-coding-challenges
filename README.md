@@ -2,7 +2,7 @@
 
 > Building one HTML/CSS/JS project every day for 30 days to sharpen frontend skills and grow my GitHub profile.
 
-![Progress](https://img.shields.io/badge/Progress-3%2F30-orange?style=flat-square)
+![Progress](https://img.shields.io/badge/Progress-4%2F30-orange?style=flat-square)
 ![HTML](https://img.shields.io/badge/HTML5-%23E34F26.svg?style=flat-square&logo=html5&logoColor=white)
 ![CSS](https://img.shields.io/badge/CSS3-%231572B6.svg?style=flat-square&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-%23F7DF1E.svg?style=flat-square&logo=javascript&logoColor=black)
@@ -21,36 +21,36 @@ Each project lives in its own folder with a dedicated README and live GitHub Pag
 
 | Day | Challenge | Difficulty | Status | Live Demo |
 |-----|-----------|------------|--------|-----------|
-| 01 | Animated Hero Section | 🟢 Beginner | ✅ Todo | [Demo](/Day-01-Animated-Hero-Section/) |
-| 02 | Responsive Nav Bar | 🟢 Beginner | ✅ Todo | [Demo](/Day-02-Responsive-Navbar) |
-| 03 | CSS Card Flip | 🟢 Beginner | ✅ Todo | [Demo](/Day-03-CSS-Card-Flip/) |
-| 04 | Custom Range Slider | 🟢 Beginner | ⬜ Todo | [Demo](#) |
-| 05 | Dark / Light Mode Toggle | 🟢 Beginner | ⬜ Todo | [Demo](#) |
-| 06 | Typewriter Text Effect | 🟢 Beginner | ⬜ Todo | [Demo](#) |
-| 07 | Responsive Image Gallery | 🟡 Intermediate | ⬜ Todo | [Demo](#) |
-| 08 | Interactive Pricing Table | 🟡 Intermediate | ⬜ Todo | [Demo](#) |
-| 09 | Drag & Drop Todo List | 🟡 Intermediate | ⬜ Todo | [Demo](#) |
-| 10 | Animated CSS Loader Pack | 🟢 Beginner | ⬜ Todo | [Demo](#) |
-| 11 | Scroll-Triggered Animations | 🟡 Intermediate | ⬜ Todo | [Demo](#) |
-| 12 | Multi-Step Form | 🟡 Intermediate | ⬜ Todo | [Demo](#) |
-| 13 | CSS-Only Accordion FAQ | 🟢 Beginner | ⬜ Todo | [Demo](#) |
-| 14 | Parallax Scrolling Page | 🟡 Intermediate | ⬜ Todo | [Demo](#) |
-| 15 | Glassmorphism Dashboard | 🟡 Intermediate | ⬜ Todo | [Demo](#) |
-| 16 | Animated SVG Icon Set | 🟡 Intermediate | ⬜ Todo | [Demo](#) |
-| 17 | Real-Time Character Counter | 🟢 Beginner | ⬜ Todo | [Demo](#) |
-| 18 | CSS Grid Layout Builder | 🟡 Intermediate | ⬜ Todo | [Demo](#) |
-| 19 | Smooth Page Transition SPA | 🔴 Advanced | ⬜ Todo | [Demo](#) |
-| 20 | CSS Art — Flat Scene | 🟡 Intermediate | ⬜ Todo | [Demo](#) |
-| 21 | Custom Video Player | 🔴 Advanced | ⬜ Todo | [Demo](#) |
-| 22 | Infinite Marquee / Ticker | 🟢 Beginner | ⬜ Todo | [Demo](#) |
-| 23 | 3D CSS Cube | 🟡 Intermediate | ⬜ Todo | [Demo](#) |
-| 24 | Accessible Modal System | 🔴 Advanced | ⬜ Todo | [Demo](#) |
-| 25 | Color Palette Generator | 🟡 Intermediate | ⬜ Todo | [Demo](#) |
-| 26 | Sticky Sidebar + TOC | 🔴 Advanced | ⬜ Todo | [Demo](#) |
-| 27 | Animated Number Counter | 🟡 Intermediate | ⬜ Todo | [Demo](#) |
-| 28 | Responsive Email Template | 🔴 Advanced | ⬜ Todo | [Demo](#) |
-| 29 | Canvas Particle System | 🔴 Advanced | ⬜ Todo | [Demo](#) |
-| 30 | Full Portfolio Page | 🔴 Advanced | ⬜ Todo | [Demo](#) |
+| 01 | Animated Hero Section | Beginner | ✅ Todo | [Demo](/Day-01-Animated-Hero-Section/) |
+| 02 | Responsive Nav Bar | Beginner | ✅ Todo | [Demo](/Day-02-Responsive-Navbar) |
+| 03 | CSS Card Flip | Beginner | ✅ Todo | [Demo](/Day-03-CSS-Card-Flip/) |
+| 04 | Custom Range Slider | Beginner | ✅ Todo | [Demo](/Day-04-Custom-Range-Slider/) |
+| 05 | Dark / Light Mode Toggle | Beginner | ⬜ Todo | [Demo](#) |
+| 06 | Typewriter Text Effect | Beginner | ⬜ Todo | [Demo](#) |
+| 07 | Responsive Image Gallery | Intermediate | ⬜ Todo | [Demo](#) |
+| 08 | Interactive Pricing Table | Intermediate | ⬜ Todo | [Demo](#) |
+| 09 | Drag & Drop Todo List | Intermediate | ⬜ Todo | [Demo](#) |
+| 10 | Animated CSS Loader Pack | Beginner | ⬜ Todo | [Demo](#) |
+| 11 | Scroll-Triggered Animations | Intermediate | ⬜ Todo | [Demo](#) |
+| 12 | Multi-Step Form | Intermediate | ⬜ Todo | [Demo](#) |
+| 13 | CSS-Only Accordion FAQ | Beginner | ⬜ Todo | [Demo](#) |
+| 14 | Parallax Scrolling Page | Intermediate | ⬜ Todo | [Demo](#) |
+| 15 | Glassmorphism Dashboard | Intermediate | ⬜ Todo | [Demo](#) |
+| 16 | Animated SVG Icon Set | Intermediate | ⬜ Todo | [Demo](#) |
+| 17 | Real-Time Character Counter | Beginner | ⬜ Todo | [Demo](#) |
+| 18 | CSS Grid Layout Builder | Intermediate | ⬜ Todo | [Demo](#) |
+| 19 | Smooth Page Transition SPA | Advanced | ⬜ Todo | [Demo](#) |
+| 20 | CSS Art — Flat Scene | Intermediate | ⬜ Todo | [Demo](#) |
+| 21 | Custom Video Player | Advanced | ⬜ Todo | [Demo](#) |
+| 22 | Infinite Marquee / Ticker | Beginner | ⬜ Todo | [Demo](#) |
+| 23 | 3D CSS Cube | Intermediate | ⬜ Todo | [Demo](#) |
+| 24 | Accessible Modal System | Advanced | ⬜ Todo | [Demo](#) |
+| 25 | Color Palette Generator | Intermediate | ⬜ Todo | [Demo](#) |
+| 26 | Sticky Sidebar + TOC | Advanced | ⬜ Todo | [Demo](#) |
+| 27 | Animated Number Counter | Intermediate | ⬜ Todo | [Demo](#) |
+| 28 | Responsive Email Template | Advanced | ⬜ Todo | [Demo](#) |
+| 29 | Canvas Particle System | Advanced | ⬜ Todo | [Demo](#) |
+| 30 | Full Portfolio Page | Advanced | ⬜ Todo | [Demo](#) |
 
 ✅
 
