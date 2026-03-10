@@ -22,8 +22,8 @@ Each project lives in its own folder with a dedicated README and live GitHub Pag
 | Day | Challenge | Difficulty | Status | Live Demo |
 |-----|-----------|------------|--------|-----------|
 | 01 | Animated Hero Section | 🟢 Beginner | ✅ Todo | [Demo](/Day-01-Animated-Hero-Section/) |
-| 02 | Responsive Nav Bar | 🟢 Beginner | ✅ Todo | [Demo](#) |
-| 03 | CSS Card Flip | 🟢 Beginner | ⬜ Todo | [Demo](#) |
+| 02 | Responsive Nav Bar | 🟢 Beginner | ✅ Todo | [Demo](/Day-02-Responsive-Navbar) |
+| 03 | CSS Card Flip | 🟢 Beginner | ✅ Todo | [Demo](/Day-03-CSS-Card-Flip/) |
 | 04 | Custom Range Slider | 🟢 Beginner | ⬜ Todo | [Demo](#) |
 | 05 | Dark / Light Mode Toggle | 🟢 Beginner | ⬜ Todo | [Demo](#) |
 | 06 | Typewriter Text Effect | 🟢 Beginner | ⬜ Todo | [Demo](#) |
