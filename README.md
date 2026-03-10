@@ -2,7 +2,7 @@
 
 > Building one HTML/CSS/JS project every day for 30 days to sharpen frontend skills and grow my GitHub profile.
 
-![Progress](https://img.shields.io/badge/Progress-0%2F30-orange?style=flat-square)
+![Progress](https://img.shields.io/badge/Progress-3%2F30-orange?style=flat-square)
 ![HTML](https://img.shields.io/badge/HTML5-%23E34F26.svg?style=flat-square&logo=html5&logoColor=white)
 ![CSS](https://img.shields.io/badge/CSS3-%231572B6.svg?style=flat-square&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-%23F7DF1E.svg?style=flat-square&logo=javascript&logoColor=black)
