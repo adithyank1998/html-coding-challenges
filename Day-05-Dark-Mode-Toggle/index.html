@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 05 — Dark / Light Mode Toggle</title>
+<link href="https://fonts.googleapis.com/css2?family=Gilda+Display&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  /* LIGHT MODE (default) */
+  :root, [data-theme="light"] {
+    --bg:          #faf8f5;
+    --bg2:         #f0ece6;
+    --surface:     #ffffff;
+    --border:      #e4ddd4;
+    --text:        #1c1917;
+    --text2:       #78716c;
+    --accent:      #b45309;
+    --accent-bg:   #fef3c7;
+    --toggle-bg:   #e4ddd4;
+    --toggle-knob: #ffffff;
+    --shadow:      rgba(0,0,0,0.08);
+    --card-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    --icon-sun:    block;
+    --icon-moon:   none;
+  }
+
+  /* DARK MODE — applied when html has data-theme="dark" */
+  [data-theme="dark"] {
+    --bg:          #0f0e0c;
+    --bg2:         #1a1814;
+    --surface:     #1f1d19;
+    --border:      #2e2b25;
+    --text:        #f5f0e8;
+    --text2:       #8a8278;
+    --accent:      #f59e0b;
+    --accent-bg:   rgba(245,158,11,0.12);
+    --toggle-bg:   #2e2b25;
+    --toggle-knob: #f5f0e8;
+    --shadow:      rgba(0,0,0,0.3);
+    --card-shadow: 0 2px 16px rgba(0,0,0,0.25);
+    --icon-sun:    none;
+    --icon-moon:   block;
+  }
+
+  /* ── Smooth transition for ALL elements when theme switches ── */
+  *, *::before, *::after {
+    transition:
+      background-color 0.4s ease,
+      color 0.4s ease,
+      border-color 0.4s ease,
+      box-shadow 0.4s ease;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Jost', sans-serif;
+    min-height: 100vh;
+  }
+
+  .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px;
+    height: 64px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--card-shadow);
+  }
+
+  .nav-logo {
+    font-family: 'Gilda Display', serif;
+    font-size: 1.3rem;
+    color: var(--text);
+    letter-spacing: 0.5px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text2);
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--text); }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  /* TOGGLE SWITCH */
+
+  .toggle-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .toggle-icon {
+    font-size: 15px;
+    line-height: 1;
+    user-select: none;
+  }
+
+  /* The outer pill track */
+  .toggle {
+    position: relative;
+    width: 52px;
+    height: 28px;
+    background: var(--toggle-bg);
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.4s ease;
+  }
+
+  /* The sliding knob */
+  .toggle::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--toggle-knob);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                background 0.4s ease;
+  }
+
+  /* When dark mode: slide knob to the right */
+  [data-theme="dark"] .toggle::after {
+    transform: translateX(24px);
+    background: var(--accent);   /* knob turns amber in dark mode */
+  }
+
+  /* Glow on the track when dark */
+  [data-theme="dark"] .toggle {
+    box-shadow: 0 0 0 1px rgba(245,158,11,0.2);
+  }
+
+  /* Hidden checkbox powers the toggle — accessibility */
+  .toggle-input {
+    position: absolute;
+    opacity: 0;
+    width: 0; height: 0;
+  }
+
+  /* HERO SECTION */
+
+  .hero {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 80px 40px 60px;
+    text-align: center;
+    animation: fadeUp 0.7s ease both;
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--accent);
+    background: var(--accent-bg);
+    padding: 5px 16px;
+    border-radius: 20px;
+    margin-bottom: 28px;
+  }
+
+  .hero h1 {
+    font-family: 'Gilda Display', serif;
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    color: var(--text);
+    margin-bottom: 22px;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero p {
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--text2);
+    line-height: 1.75;
+    max-width: 520px;
+    margin: 0 auto 40px;
+  }
+
+  /* Big demo toggle in hero */
+  .hero-toggle-demo {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 12px 24px;
+    box-shadow: var(--card-shadow);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .hero-toggle-demo span {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text2);
+    letter-spacing: 0.5px;
+  }
+
+  .big-toggle {
+    position: relative;
+    width: 72px;
+    height: 38px;
+    background: var(--toggle-bg);
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    transition: background 0.4s;
+  }
+
+  .big-toggle::after {
+    content: '';
+    position: absolute;
+    top: 4px; left: 4px;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--toggle-knob);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                background 0.4s;
+  }
+
+  [data-theme="dark"] .big-toggle::after {
+    transform: translateX(34px);
+    background: var(--accent);
+  }
+
+  /* FOOTER */
+
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    text-align: center;
+    padding: 28px 20px;
+    font-size: 12px;
+    color: var(--text2);
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Day badge ── */
+  .day-badge {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--text2);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 20px;
+    box-shadow: var(--card-shadow);
+  }
+
+  /* ── Theme label that updates ── */
+  .theme-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text2);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .navbar { padding: 0 20px; }
+    .nav-links { display: none; }
+    .hero { padding: 60px 24px 40px; }
+    .section { padding: 0 24px 60px; }
+    .article-block { flex-direction: column; gap: 8px; }
+    .article-num { font-size: 1.5rem; }
+  }
+
+  @media (max-width: 480px) {
+    .cards-grid { grid-template-columns: 1fr; }
+    .hero-toggle-demo { padding: 10px 18px; gap: 12px; }
+  }
+</style>
+</head>
+
+<!-- data-theme on <html> controls the whole page theme -->
+<html lang="en" data-theme="light">
+<body>
+
+<!-- ── NAVBAR with small toggle ── -->
+<nav class="navbar">
+  <div class="nav-logo">prototype</div>
+  <ul class="nav-links">
+    <li><a href="#">Work</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="#">Journal</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="toggle-wrap">
+      <span class="toggle-icon">☀️</span>
+      <div class="toggle" id="navToggle" role="switch" aria-checked="false"
+           aria-label="Toggle dark mode" tabindex="0"></div>
+      <span class="toggle-icon">🌙</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-tag">✦ Day 05 / 30</div>
+  <h1>Design for<br>every <em>mood.</em></h1>
+  <p>
+    A fully themed page that switches between light and dark mode instantly.
+    Your preference is saved — so it remembers you next time.
+  </p>
+
+  <!-- Big clickable toggle demo -->
+  <div class="hero-toggle-demo" id="heroToggle">
+    <span id="themeLabel">Light Mode</span>
+    <div class="big-toggle"></div>
+  </div>
+</section>
+
+<footer>
+  Day 05 / 30 — Dark / Light Mode Toggle · Built with HTML, CSS & Vanilla JS
+</footer>
+
+<div class="day-badge">Day 05 / 30</div>
+
+<script>
+  const html      = document.documentElement; // the <html> element
+  const navToggle = document.getElementById('navToggle');
+  const heroToggle = document.getElementById('heroToggle');
+  const themeLabel = document.getElementById('themeLabel');
+
+  // ── Step 1: Load saved theme from localStorage on page load
+  const saved = localStorage.getItem('theme') || 'light';
+  applyTheme(saved);
+
+  // ── Step 2: Nav toggle click
+  navToggle.addEventListener('click', toggleTheme);
+
+  // ── Step 3: Hero big toggle click
+  heroToggle.addEventListener('click', toggleTheme);
+
+  // ── Step 4: Keyboard support (Enter / Space on nav toggle)
+  navToggle.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleTheme();
+    }
+  });
+
+  function toggleTheme() {
+    // Read current theme, flip it
+    const current = html.getAttribute('data-theme');
+    const next    = current === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+  }
+
+  function applyTheme(theme) {
+    // 1. Set the attribute on <html> — CSS does the rest!
+    html.setAttribute('data-theme', theme);
+
+    // 2. Save to localStorage so it persists
+    localStorage.setItem('theme', theme);
+
+    // 3. Update aria attribute for accessibility
+    navToggle.setAttribute('aria-checked', theme === 'dark');
+
+    // 4. Update the label text
+    themeLabel.textContent = theme === 'dark' ? 'Dark Mode' : 'Light Mode';
+  }
+</script>
+</body>
+</html>
