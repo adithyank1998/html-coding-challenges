@@ -1,7 +1,7 @@
 # Day 05 — Dark / Light Mode Toggle
 
 ![Preview](PreviewLight.png)
- [Preview](PreviewDark.png)
+![Preview](PreviewDark.png)
 
 ## Challenge
 
