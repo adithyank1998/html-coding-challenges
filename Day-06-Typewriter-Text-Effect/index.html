@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 06 — Typewriter Effect</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #f0f2f5;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 60px 48px;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+    text-align: center;
+  }
+
+  .label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #bbb;
+    margin-bottom: 28px;
+  }
+
+  .greeting {
+    font-size: 1.1rem;
+    color: #999;
+    margin-bottom: 6px;
+  }
+
+  .tw-line {
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    font-weight: 700;
+    color: #1a1a2e;
+    min-height: 1.3em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin-bottom: 48px;
+  }
+
+  .cursor {
+    display: inline-block;
+    width: 3px;
+    height: 1em;
+    background: #6366f1;
+    border-radius: 2px;
+    flex-shrink: 0;
+    position: relative;
+    top: 2px;
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+  }
+
+  .buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+
+  button {
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 24px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.15s, opacity 0.15s;
+  }
+
+  button:hover { opacity: 0.85; transform: translateY(-2px); }
+
+  .btn-primary { background: #6366f1; color: #fff; }
+  .btn-ghost   { background: #f3f4f6; color: #374151; }
+
+  .speed-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .speed-label {
+    font-size: 12px;
+    color: #bbb;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+
+  .chip {
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 16px;
+    border-radius: 20px;
+    border: 1.5px solid #e5e7eb;
+    background: #fff;
+    color: #999;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .chip.active, .chip:hover {
+    background: #6366f1;
+    color: #fff;
+    border-color: #6366f1;
+  }
+
+  .day-badge {
+    position: fixed;
+    bottom: 20px; right: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #bbb;
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 6px 14px;
+    border-radius: 20px;
+  }
+
+  @media (max-width: 480px) {
+    .card { padding: 40px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="label">Day 06 / 30 — Typewriter Effect</div>
+
+  <p class="greeting">Hi there, I am a</p>
+
+  <div class="tw-line">
+    <span id="typed"></span>
+    <span class="cursor"></span>
+  </div>
+
+  <div class="buttons">
+    <button class="btn-primary" onclick="restart()">▶ Restart</button>
+    <button class="btn-ghost" id="pauseBtn" onclick="togglePause()">⏸ Pause</button>
+    <button class="btn-ghost" onclick="skip()">⏭ Skip</button>
+  </div>
+
+  <div class="speed-row">
+    <span class="speed-label">Speed:</span>
+    <button class="chip" onclick="setSpeed(120, this)">Slow</button>
+    <button class="chip active" onclick="setSpeed(65, this)">Normal</button>
+    <button class="chip" onclick="setSpeed(25, this)">Fast</button>
+  </div>
+</div>
+
+<div class="day-badge">Day 06 / 30</div>
+
+<script>
+  const el    = document.getElementById('typed');
+  const words = [
+    'Web Developer.',
+    'UI Designer.',
+    'CSS Lover.',
+    'Problem Solver.',
+    'Lifelong Learner.',
+  ];
+
+  let wordIndex = 0;
+  let charIndex = 0;
+  let deleting  = false;
+  let paused    = false;
+  let speed     = 65;
+  let timer     = null;
+
+  function tick() {
+    if (paused) return;
+
+    const current = words[wordIndex];
+
+    if (!deleting) {
+      charIndex++;
+      el.textContent = current.slice(0, charIndex);
+
+      if (charIndex === current.length) {
+        timer = setTimeout(() => { deleting = true; tick(); }, 1800);
+        return;
+      }
+    } else {
+      charIndex--;
+      el.textContent = current.slice(0, charIndex);
+
+      if (charIndex === 0) {
+        deleting  = false;
+        wordIndex = (wordIndex + 1) % words.length;
+        timer = setTimeout(tick, 400);
+        return;
+      }
+    }
+
+    timer = setTimeout(tick, deleting ? 30 : speed);
+  }
+
+  tick();
+
+  function restart() {
+    clearTimeout(timer);
+    wordIndex = 0; charIndex = 0; deleting = false; paused = false;
+    el.textContent = '';
+    document.getElementById('pauseBtn').textContent = '⏸ Pause';
+    tick();
+  }
+
+  function togglePause() {
+    paused = !paused;
+    document.getElementById('pauseBtn').textContent = paused ? '▶ Resume' : '⏸ Pause';
+    if (!paused) tick();
+  }
+
+  function skip() {
+    clearTimeout(timer);
+    el.textContent = words[wordIndex];
+    charIndex = words[wordIndex].length;
+    deleting = true;
+    timer = setTimeout(() => { tick(); }, 1800);
+  }
+
+  function setSpeed(ms, btn) {
+    speed = ms;
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+  }
+</script>
+</body>
+</html>
