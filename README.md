@@ -26,7 +26,7 @@ Each project lives in its own folder with a dedicated README and live GitHub Pag
 | 03 | CSS Card Flip | Beginner | ✅ Todo | [Demo](/Day-03-CSS-Card-Flip/) |
 | 04 | Custom Range Slider | Beginner | ✅ Todo | [Demo](/Day-04-Custom-Range-Slider/) |
 | 05 | Dark / Light Mode Toggle | Beginner | ✅ Todo | [Demo](/Day-05-Dark-Mode-Toggle/) |
-| 06 | Typewriter Text Effect | Beginner | ⬜ Todo | [Demo](#) |
+| 06 | Typewriter Text Effect | Beginner | ✅ Todo | [Demo](/Day-06-Typewriter-Text-Effect/) |
 | 07 | Responsive Image Gallery | Intermediate | ⬜ Todo | [Demo](#) |
 | 08 | Interactive Pricing Table | Intermediate | ⬜ Todo | [Demo](#) |
 | 09 | Drag & Drop Todo List | Intermediate | ⬜ Todo | [Demo](#) |
