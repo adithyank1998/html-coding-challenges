@@ -9,8 +9,8 @@ Build a responsive image gallery with category filtering and a lightbox viewer.
 
 ## What I Built
 
-- 12 photo cards in a **3-column CSS Grid**
-- **Filter buttons** — All / Nature / City / Abstract
+- 11 photo cards in a **3-column CSS Grid**
+- **Filter buttons** — All / Nature 
 - **Hover effect** — card lifts up, title label fades in
 - **Lightbox** — click any card to open fullscreen view
 - Prev / Next buttons + keyboard arrow key navigation

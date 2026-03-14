@@ -2,7 +2,7 @@
 
 > Building one HTML/CSS/JS project every day for 30 days to sharpen frontend skills and grow my GitHub profile.
 
-![Progress](https://img.shields.io/badge/Progress-4%2F30-orange?style=flat-square)
+![Progress](https://img.shields.io/badge/Progress-7%2F30-orange?style=flat-square)
 ![HTML](https://img.shields.io/badge/HTML5-%23E34F26.svg?style=flat-square&logo=html5&logoColor=white)
 ![CSS](https://img.shields.io/badge/CSS3-%231572B6.svg?style=flat-square&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-%23F7DF1E.svg?style=flat-square&logo=javascript&logoColor=black)
@@ -27,7 +27,7 @@ Each project lives in its own folder with a dedicated README and live GitHub Pag
 | 04 | Custom Range Slider | Beginner | ✅ Todo | [Demo](/Day-04-Custom-Range-Slider/) |
 | 05 | Dark / Light Mode Toggle | Beginner | ✅ Todo | [Demo](/Day-05-Dark-Mode-Toggle/) |
 | 06 | Typewriter Text Effect | Beginner | ✅ Todo | [Demo](/Day-06-Typewriter-Text-Effect/) |
-| 07 | Responsive Image Gallery | Intermediate | ⬜ Todo | [Demo](#) |
+| 07 | Responsive Image Gallery | Intermediate | ✅ Todo | [Demo](/Day-07-Responsive-Image-Gallery/) |
 | 08 | Interactive Pricing Table | Intermediate | ⬜ Todo | [Demo](#) |
 | 09 | Drag & Drop Todo List | Intermediate | ⬜ Todo | [Demo](#) |
 | 10 | Animated CSS Loader Pack | Beginner | ⬜ Todo | [Demo](#) |
