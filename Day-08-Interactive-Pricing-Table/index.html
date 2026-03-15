@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 08 — Pricing Table</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #f0f2f5;
+    min-height: 100vh;
+    padding: 60px 24px 80px;
+  }
+
+  /* ── Header ── */
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .header h1 {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 10px;
+  }
+
+  .header p {
+    font-size: 15px;
+    color: #888;
+  }
+
+  /* ── Toggle ── */
+  .toggle-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 48px;
+  }
+
+  .toggle-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #888;
+    transition: color 0.2s;
+  }
+
+  .toggle-label.active { color: #1a1a1a; }
+
+  .toggle-track {
+    position: relative;
+    width: 52px; height: 28px;
+    background: #6366f1;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .toggle-knob {
+    position: absolute;
+    top: 4px; left: 4px;
+    width: 20px; height: 20px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+
+  .toggle-track.yearly .toggle-knob { transform: translateX(24px); }
+
+  .save-badge {
+    font-size: 11px;
+    font-weight: 700;
+    background: #dcfce7;
+    color: #16a34a;
+    padding: 3px 10px;
+    border-radius: 100px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Cards grid ── */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: 980px;
+    margin: 0 auto;
+    align-items: start;
+  }
+
+  /* ── Single card ── */
+  .card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 36px 30px;
+    border: 2px solid transparent;
+    transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+    position: relative;
+  }
+
+  .card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.10);
+  }
+
+  /* Popular card */
+  .card.popular {
+    background: #6366f1;
+    border-color: #6366f1;
+    transform: scale(1.04);
+    box-shadow: 0 20px 60px rgba(99,102,241,0.35);
+  }
+
+  .card.popular:hover {
+    transform: scale(1.04) translateY(-6px);
+  }
+
+  /* Popular badge */
+  .popular-badge {
+    display: none;
+    position: absolute;
+    top: -14px; left: 50%;
+    transform: translateX(-50%);
+    background: #f59e0b;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 4px 16px;
+    border-radius: 100px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .card.popular .popular-badge { display: block; }
+
+  /* Plan name */
+  .plan-name {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #6366f1;
+    margin-bottom: 16px;
+  }
+
+  .card.popular .plan-name { color: rgba(255,255,255,0.75); }
+
+  /* Price */
+  .price-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+
+  .currency {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 6px;
+  }
+
+  .amount {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1;
+    transition: all 0.3s;
+  }
+
+  .period {
+    font-size: 14px;
+    color: #aaa;
+    margin-bottom: 6px;
+  }
+
+  .card.popular .currency,
+  .card.popular .amount  { color: #fff; }
+  .card.popular .period  { color: rgba(255,255,255,0.6); }
+
+  .price-desc {
+    font-size: 12px;
+    color: #bbb;
+    margin-bottom: 28px;
+  }
+
+  .card.popular .price-desc { color: rgba(255,255,255,0.55); }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: #f0f0f0;
+    margin-bottom: 24px;
+  }
+
+  .card.popular .divider { background: rgba(255,255,255,0.2); }
+
+  /* Feature list */
+  .features {
+    list-style: none;
+    margin-bottom: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .features li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #444;
+  }
+
+  .card.popular .features li { color: rgba(255,255,255,0.9); }
+
+  .features li .check {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: #ede9fe;
+    color: #6366f1;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  .card.popular .features li .check {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+  }
+
+  .features li .cross {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: #f5f5f5;
+    color: #ccc;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  .features li.disabled { color: #ccc; }
+  .card.popular .features li.disabled { color: rgba(255,255,255,0.35); }
+
+  /* CTA Button */
+  .cta {
+    width: 100%;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 14px;
+    border-radius: 12px;
+    border: 2px solid #6366f1;
+    background: transparent;
+    color: #6366f1;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .cta:hover {
+    background: #6366f1;
+    color: #fff;
+  }
+
+  .card.popular .cta {
+    background: #fff;
+    color: #6366f1;
+    border-color: #fff;
+  }
+
+  .card.popular .cta:hover {
+    background: transparent;
+    color: #fff;
+    border-color: #fff;
+  }
+
+  /* ── Day badge ── */
+  .day-badge {
+    position: fixed;
+    bottom: 20px; right: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #aaa;
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 6px 14px;
+    border-radius: 20px;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 780px) {
+    .cards {
+      grid-template-columns: 1fr;
+      max-width: 400px;
+    }
+    .card.popular { transform: scale(1); }
+    .card.popular:hover { transform: translateY(-6px); }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Simple, Transparent Pricing</h1>
+  <p>Choose the plan that works best for you.</p>
+</div>
+
+<!-- Billing toggle -->
+<div class="toggle-wrap">
+  <span class="toggle-label active" id="lblMonthly">Monthly</span>
+  <div class="toggle-track" id="toggleTrack" onclick="toggleBilling()">
+    <div class="toggle-knob"></div>
+  </div>
+  <span class="toggle-label" id="lblYearly">Yearly</span>
+  <span class="save-badge">Save 20%</span>
+</div>
+
+<!-- Pricing cards -->
+<div class="cards">
+
+  <!-- Starter -->
+  <div class="card">
+    <div class="plan-name">Starter</div>
+    <div class="price-row">
+      <span class="currency">$</span>
+      <span class="amount" id="price0">9</span>
+      <span class="period">/mo</span>
+    </div>
+    <p class="price-desc" id="desc0">Billed monthly</p>
+    <div class="divider"></div>
+    <ul class="features">
+      <li><span class="check">✓</span> 5 Projects</li>
+      <li><span class="check">✓</span> 10 GB Storage</li>
+      <li><span class="check">✓</span> Email Support</li>
+      <li class="disabled"><span class="cross">✕</span> Analytics</li>
+      <li class="disabled"><span class="cross">✕</span> Custom Domain</li>
+      <li class="disabled"><span class="cross">✕</span> Priority Support</li>
+    </ul>
+    <button class="cta">Get Started</button>
+  </div>
+
+  <!-- Pro (popular) -->
+  <div class="card popular">
+    <div class="popular-badge">Most Popular</div>
+    <div class="plan-name">Pro</div>
+    <div class="price-row">
+      <span class="currency">$</span>
+      <span class="amount" id="price1">29</span>
+      <span class="period">/mo</span>
+    </div>
+    <p class="price-desc" id="desc1">Billed monthly</p>
+    <div class="divider"></div>
+    <ul class="features">
+      <li><span class="check">✓</span> 20 Projects</li>
+      <li><span class="check">✓</span> 50 GB Storage</li>
+      <li><span class="check">✓</span> Email Support</li>
+      <li><span class="check">✓</span> Analytics</li>
+      <li><span class="check">✓</span> Custom Domain</li>
+      <li class="disabled"><span class="cross">✕</span> Priority Support</li>
+    </ul>
+    <button class="cta">Get Started</button>
+  </div>
+
+  <!-- Enterprise -->
+  <div class="card">
+    <div class="plan-name">Enterprise</div>
+    <div class="price-row">
+      <span class="currency">$</span>
+      <span class="amount" id="price2">79</span>
+      <span class="period">/mo</span>
+    </div>
+    <p class="price-desc" id="desc2">Billed monthly</p>
+    <div class="divider"></div>
+    <ul class="features">
+      <li><span class="check">✓</span> Unlimited Projects</li>
+      <li><span class="check">✓</span> 200 GB Storage</li>
+      <li><span class="check">✓</span> Email Support</li>
+      <li><span class="check">✓</span> Analytics</li>
+      <li><span class="check">✓</span> Custom Domain</li>
+      <li><span class="check">✓</span> Priority Support</li>
+    </ul>
+    <button class="cta">Get Started</button>
+  </div>
+
+</div>
+
+<div class="day-badge">Day 08 / 30</div>
+
+<script>
+  // Monthly vs Yearly prices
+  const prices = {
+    monthly: [9,  29,  79],
+    yearly:  [7,  23,  63],   // ~20% off, rounded
+  };
+
+  let isYearly = false;
+
+  function toggleBilling() {
+    isYearly = !isYearly;
+
+    // Toggle track style
+    document.getElementById('toggleTrack').classList.toggle('yearly', isYearly);
+
+    // Active label
+    document.getElementById('lblMonthly').classList.toggle('active', !isYearly);
+    document.getElementById('lblYearly').classList.toggle('active',  isYearly);
+
+    // Update prices
+    const set = isYearly ? prices.yearly : prices.monthly;
+    set.forEach((p, i) => {
+      document.getElementById('price' + i).textContent = p;
+      document.getElementById('desc'  + i).textContent = isYearly
+        ? 'Billed annually'
+        : 'Billed monthly';
+    });
+  }
+</script>
+</body>
+</html>
