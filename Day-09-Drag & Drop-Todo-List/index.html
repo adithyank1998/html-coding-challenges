@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 09 — Drag & Drop Todo</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #f0f2f5;
+    min-height: 100vh;
+    padding: 48px 24px 80px;
+  }
+
+  /* ── Header ── */
+  h1 {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+  }
+
+  .sub {
+    text-align: center;
+    font-size: 14px;
+    color: #999;
+    margin-bottom: 36px;
+  }
+
+  /* ── Add task row ── */
+  .add-row {
+    display: flex;
+    gap: 10px;
+    max-width: 500px;
+    margin: 0 auto 40px;
+  }
+
+  .add-row input {
+    flex: 1;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    padding: 12px 18px;
+    border-radius: 12px;
+    border: 2px solid #e0e0e0;
+    background: #fff;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .add-row input:focus { border-color: #6366f1; }
+
+  .add-row button {
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: none;
+    background: #000000;
+    color: #fff;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+
+  .add-row button:hover { opacity: 0.88; transform: translateY(-1px); }
+
+  /* ── Columns ── */
+  .board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .column {
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px;
+    min-height: 320px;
+    border: 2px solid transparent;
+    transition: border-color 0.2s;
+  }
+
+  /* Highlight column when dragging over */
+  .column.drag-over {
+    border-color: #6366f1;
+    background: #fafafe;
+  }
+
+  .col-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .col-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .col-count {
+    font-size: 12px;
+    font-weight: 600;
+    background: #f3f4f6;
+    color: #888;
+    padding: 2px 10px;
+    border-radius: 100px;
+  }
+
+  /* Column colours */
+  .col-todo    .col-title { color: #6366f1; }
+  .col-doing   .col-title { color: #f59e0b; }
+  .col-done    .col-title { color: #10b981; }
+
+  .col-todo  .col-count { background: #ede9fe; color: #6366f1; }
+  .col-doing .col-count { background: #fef3c7; color: #d97706; }
+  .col-done  .col-count { background: #d1fae5; color: #059669; }
+
+  /* ── Task cards ── */
+  .task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 60px;
+  }
+
+  .task {
+    background: #f9fafb;
+    border: 1.5px solid #f0f0f0;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+    color: #1a1a1a;
+    cursor: grab;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    transition: box-shadow 0.2s, transform 0.2s, opacity 0.2s;
+    user-select: none;
+  }
+
+  .task:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    transform: translateY(-1px);
+  }
+
+  /* While being dragged */
+  .task.dragging {
+    opacity: 0.4;
+    cursor: grabbing;
+    transform: rotate(1.5deg);
+  }
+
+  .task-text { flex: 1; line-height: 1.4; }
+
+  /* Done tasks get strikethrough */
+  .col-done .task .task-text {
+    text-decoration: line-through;
+    color: #aaa;
+  }
+
+  /* Delete button */
+  .delete-btn {
+    background: none;
+    border: none;
+    color: #ccc;
+    font-size: 16px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 2px;
+    border-radius: 4px;
+    transition: color 0.2s;
+    flex-shrink: 0;
+  }
+
+  .delete-btn:hover { color: #ef4444; }
+
+  /* ── Empty state ── */
+  .empty-hint {
+    text-align: center;
+    font-size: 13px;
+    color: #ccc;
+    padding: 20px 0;
+    pointer-events: none;
+  }
+
+  /* ── Day badge ── */
+  .day-badge {
+    position: fixed;
+    bottom: 20px; right: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #aaa;
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 6px 14px;
+    border-radius: 20px;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 700px) {
+    .board { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Task Board</h1>
+<p class="sub">Drag tasks between columns · Click ✕ to delete</p>
+
+<!-- Add task -->
+<div class="add-row">
+  <input type="text" id="taskInput" placeholder="Add a new task..." maxlength="80">
+  <button onclick="addTask()">+ Add</button>
+</div>
+
+<!-- Board -->
+<div class="board">
+
+  <div class="column col-todo" id="col-todo" ondragover="onDragOver(event)" ondrop="onDrop(event, 'todo')" ondragleave="onDragLeave(event)">
+    <div class="col-header">
+      <span class="col-title">To Do</span>
+      <span class="col-count" id="count-todo">0</span>
+    </div>
+    <div class="task-list" id="list-todo"></div>
+  </div>
+
+  <div class="column col-doing" id="col-doing" ondragover="onDragOver(event)" ondrop="onDrop(event, 'doing')" ondragleave="onDragLeave(event)">
+    <div class="col-header">
+      <span class="col-title">In Progress</span>
+      <span class="col-count" id="count-doing">0</span>
+    </div>
+    <div class="task-list" id="list-doing"></div>
+  </div>
+
+  <div class="column col-done" id="col-done" ondragover="onDragOver(event)" ondrop="onDrop(event, 'done')" ondragleave="onDragLeave(event)">
+    <div class="col-header">
+      <span class="col-title">Done</span>
+      <span class="col-count" id="count-done">0</span>
+    </div>
+    <div class="task-list" id="list-done"></div>
+  </div>
+
+</div>
+
+<div class="day-badge">Day 09 / 30</div>
+
+<script>
+  // ── Data ──
+  let tasks = {
+    todo:  ['Design the homepage', 'Write blog post', 'Fix navbar bug'],
+    doing: ['Build pricing table', 'Review pull request'],
+    done:  ['Setup GitHub repo'],
+  };
+
+  let draggedId   = null;  // id of the task being dragged
+  let taskCounter = 100;   // unique id counter
+
+  // ── Render ──
+  function render() {
+    ['todo', 'doing', 'done'].forEach(col => {
+      const list = document.getElementById('list-' + col);
+      list.innerHTML = '';
+
+      if (tasks[col].length === 0) {
+        list.innerHTML = '<div class="empty-hint">Drop tasks here</div>';
+      } else {
+        tasks[col].forEach((text, i) => {
+          const task = document.createElement('div');
+          task.className  = 'task';
+          task.draggable  = true;
+          task.dataset.col = col;
+          task.dataset.idx = i;
+
+          task.innerHTML = `
+            <span class="task-text">${text}</span>
+            <button class="delete-btn" onclick="deleteTask('${col}', ${i})">✕</button>
+          `;
+
+          // Drag events
+          task.addEventListener('dragstart', () => {
+            draggedId = { col, idx: i };
+            setTimeout(() => task.classList.add('dragging'), 0);
+          });
+
+          task.addEventListener('dragend', () => {
+            task.classList.remove('dragging');
+          });
+
+          list.appendChild(task);
+        });
+      }
+
+      // Update count badge
+      document.getElementById('count-' + col).textContent = tasks[col].length;
+    });
+  }
+
+  // ── Add task ──
+  function addTask() {
+    const input = document.getElementById('taskInput');
+    const text  = input.value.trim();
+    if (!text) return;
+    tasks.todo.unshift(text);
+    input.value = '';
+    render();
+  }
+
+  // ── Delete task ──
+  function deleteTask(col, idx) {
+    tasks[col].splice(idx, 1);
+    render();
+  }
+
+  // ── Drag over — highlight column ──
+  function onDragOver(e) {
+    e.preventDefault();
+    e.currentTarget.classList.add('drag-over');
+  }
+
+  function onDragLeave(e) {
+    e.currentTarget.classList.remove('drag-over');
+  }
+
+  // ── Drop — move task to new column ──
+  function onDrop(e, targetCol) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('drag-over');
+
+    if (!draggedId) return;
+
+    const { col: fromCol, idx } = draggedId;
+    if (fromCol === targetCol) return;
+
+    // Remove from source, add to target
+    const [text] = tasks[fromCol].splice(idx, 1);
+    tasks[targetCol].push(text);
+
+    draggedId = null;
+    render();
+  }
+
+  // ── Enter key to add ──
+  document.getElementById('taskInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') addTask();
+  });
+
+  // ── Initial render ──
+  render();
+</script>
+</body>
+</html>
