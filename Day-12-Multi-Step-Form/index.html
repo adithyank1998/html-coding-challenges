@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 12 — Multi Step Form</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #f0f2f5;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+
+  .form-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 48px 40px;
+    width: 100%;
+    max-width: 520px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+  }
+
+  /* ── Progress bar ── */
+  .progress-wrap {
+    margin-bottom: 36px;
+  }
+
+  .step-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .step-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #ccc;
+    transition: color 0.3s;
+  }
+
+  .step-label.active { color: #000000; }
+  .step-label.done   { color: #10b981; }
+
+  .progress-bar-bg {
+    height: 6px;
+    background: #f0f0f0;
+    border-radius: 100px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: #000000;
+    border-radius: 100px;
+    transition: width 0.4s ease;
+  }
+
+  /* ── Step dots ── */
+  .step-dots {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+
+  .step-dot {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 2px solid #e0e0e0;
+    background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #ccc;
+    transition: all 0.3s;
+  }
+
+  .step-dot.active {
+    border-color: #6366f1;
+    background: #000000;
+    color: #fff;
+  }
+
+  .step-dot.done {
+    border-color: #10b981;
+    background: #10b981;
+    color: #fff;
+  }
+
+  /* ── Step panels ── */
+  .step {
+    display: none;
+    animation: stepIn 0.35s ease;
+  }
+
+  .step.active { display: block; }
+
+  @keyframes stepIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .step-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 6px;
+  }
+
+  .step-sub {
+    font-size: 13px;
+    color: #999;
+    margin-bottom: 28px;
+  }
+
+  /* ── Form fields ── */
+  .field {
+    margin-bottom: 18px;
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 6px;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 2px solid #e0e0e0;
+    background: #fafafa;
+    outline: none;
+    transition: border-color 0.2s;
+    color: #1a1a1a;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: #6366f1;
+    background: #fff;
+  }
+
+  /* Error state */
+  input.error { border-color: #ef4444; }
+
+  .err-msg {
+    font-size: 11px;
+    color: #ef4444;
+    margin-top: 4px;
+    display: none;
+  }
+
+  .err-msg.show { display: block; }
+
+  textarea { resize: none; height: 100px; }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  /* ── Plan options ── */
+  .plan-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .plan-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .plan-option:hover { border-color: #a5b4fc; }
+
+  .plan-option.selected {
+    border-color: #6366f1;
+    background: #fafafe;
+  }
+
+  .plan-option input[type="radio"] { display: none; }
+
+  .plan-name { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+  .plan-price { font-size: 13px; font-weight: 700; color: #6366f1; }
+  .plan-desc  { font-size: 12px; color: #999; }
+
+  /* ── Summary ── */
+  .summary {
+    background: #fafafa;
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: #444;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row span:last-child { font-weight: 600; color: #1a1a1a; }
+
+  /* ── Success screen ── */
+  .success {
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .success-icon {
+    width: 72px; height: 72px;
+    background: #d1fae5;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem;
+    margin: 0 auto 20px;
+  }
+
+  .success h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 8px; }
+  .success p  { font-size: 14px; color: #888; margin-bottom: 24px; }
+
+  /* ── Buttons ── */
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+    margin-top: 8px;
+  }
+
+  .btn {
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 13px 28px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+
+  .btn:hover { opacity: 0.88; transform: translateY(-1px); }
+
+  .btn-primary { background: #6366f1; color: #fff; flex: 1; }
+  .btn-ghost   { background: #f3f4f6; color: #555; }
+  .btn-green   { background: #10b981; color: #fff; flex: 1; }
+
+  /* ── Day badge ── */
+  .day-badge {
+    position: fixed;
+    bottom: 20px; right: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #aaa;
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 6px 14px;
+    border-radius: 20px;
+  }
+
+  @media (max-width: 480px) {
+    .form-card { padding: 32px 20px; }
+    .field-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="form-card">
+
+  <!-- Progress -->
+  <div class="progress-wrap">
+    <div class="step-labels">
+      <span class="step-label active" id="lbl-1">Personal</span>
+      <span class="step-label"        id="lbl-2">Plan</span>
+      <span class="step-label"        id="lbl-3">Review</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progressFill" style="width: 33%"></div>
+    </div>
+    <div class="step-dots">
+      <div class="step-dot active" id="dot-1">1</div>
+      <div class="step-dot"        id="dot-2">2</div>
+      <div class="step-dot"        id="dot-3">3</div>
+    </div>
+  </div>
+
+  <!-- Step 1: Personal Info -->
+  <div class="step active" id="step-1">
+    <h2 class="step-title">Personal Info</h2>
+    <p class="step-sub">Tell us a bit about yourself.</p>
+
+    <div class="field-row">
+      <div class="field">
+        <label>First Name</label>
+        <input type="text" id="firstName" placeholder="Adithya">
+        <div class="err-msg" id="err-firstName">Required</div>
+      </div>
+      <div class="field">
+        <label>Last Name</label>
+        <input type="text" id="lastName" placeholder="K">
+        <div class="err-msg" id="err-lastName">Required</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Email Address</label>
+      <input type="email" id="email" placeholder="you@email.com">
+      <div class="err-msg" id="err-email">Enter a valid email</div>
+    </div>
+
+    <div class="field">
+      <label>Phone Number</label>
+      <input type="tel" id="phone" placeholder="+91 00000 00000">
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="goTo(2)">Next →</button>
+    </div>
+  </div>
+
+  <!-- Step 2: Plan -->
+  <div class="step" id="step-2">
+    <h2 class="step-title">Choose a Plan</h2>
+    <p class="step-sub">Pick the plan that fits you best.</p>
+
+    <div class="plan-options" id="planOptions">
+      <label class="plan-option selected" id="plan-starter">
+        <input type="radio" name="plan" value="Starter" checked>
+        <div>
+          <div class="plan-name">Starter</div>
+          <div class="plan-desc">For individuals just getting started</div>
+        </div>
+        <span class="plan-price">$9/mo</span>
+      </label>
+      <label class="plan-option" id="plan-pro">
+        <input type="radio" name="plan" value="Pro">
+        <div>
+          <div class="plan-name">Pro</div>
+          <div class="plan-desc">For growing teams and projects</div>
+        </div>
+        <span class="plan-price">$29/mo</span>
+      </label>
+      <label class="plan-option" id="plan-enterprise">
+        <input type="radio" name="plan" value="Enterprise">
+        <div>
+          <div class="plan-name">Enterprise</div>
+          <div class="plan-desc">Unlimited everything + priority support</div>
+        </div>
+        <span class="plan-price">$79/mo</span>
+      </label>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="goTo(1)">← Back</button>
+      <button class="btn btn-primary" onclick="goTo(3)">Next →</button>
+    </div>
+  </div>
+
+  <!-- Step 3: Review -->
+  <div class="step" id="step-3">
+    <h2 class="step-title">Review & Confirm</h2>
+    <p class="step-sub">Check your details before submitting.</p>
+
+    <div class="summary">
+      <div class="summary-row">
+        <span>Name</span>
+        <span id="sum-name">—</span>
+      </div>
+      <div class="summary-row">
+        <span>Email</span>
+        <span id="sum-email">—</span>
+      </div>
+      <div class="summary-row">
+        <span>Phone</span>
+        <span id="sum-phone">—</span>
+      </div>
+      <div class="summary-row">
+        <span>Plan</span>
+        <span id="sum-plan">—</span>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="goTo(2)">← Back</button>
+      <button class="btn btn-green" onclick="submit()">✓ Confirm</button>
+    </div>
+  </div>
+
+  <!-- Step 4: Success -->
+  <div class="step" id="step-4">
+    <div class="success">
+      <div class="success-icon">🎉</div>
+      <h2>You're all set!</h2>
+      <p>Thanks for signing up. We'll send a confirmation to your email shortly.</p>
+      <button class="btn btn-primary" onclick="restart()">Start Over</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="day-badge">Day 12 / 30</div>
+
+<script>
+  let currentStep = 1;
+
+  // Progress bar widths per step
+  const progressMap = { 1: '33%', 2: '66%', 3: '100%', 4: '100%' };
+
+  function goTo(step) {
+    // Validate step 1 before moving forward
+    if (step === 2 && currentStep === 1) {
+      if (!validateStep1()) return;
+    }
+
+    // Hide current step
+    document.getElementById('step-' + currentStep).classList.remove('active');
+
+    // Update dots and labels
+    updateProgress(step);
+
+    // If going to step 3, fill summary
+    if (step === 3) fillSummary();
+
+    // Show new step
+    currentStep = step;
+    document.getElementById('step-' + currentStep).classList.add('active');
+  }
+
+  function updateProgress(step) {
+    // Progress bar
+    document.getElementById('progressFill').style.width = progressMap[step];
+
+    // Dots
+    [1, 2, 3].forEach(i => {
+      const dot = document.getElementById('dot-' + i);
+      const lbl = document.getElementById('lbl-' + i);
+      dot.classList.remove('active', 'done');
+      lbl && lbl.classList.remove('active', 'done');
+
+      if (i < step)  { dot.classList.add('done');   dot.textContent = '✓'; lbl && lbl.classList.add('done'); }
+      if (i === step) { dot.classList.add('active'); dot.textContent = i;   lbl && lbl.classList.add('active'); }
+      if (i > step)   { dot.textContent = i; }
+    });
+  }
+
+  // ── Validation ──
+  function validateStep1() {
+    let valid = true;
+
+    const firstName = document.getElementById('firstName');
+    const lastName  = document.getElementById('lastName');
+    const email     = document.getElementById('email');
+
+    // First name
+    if (!firstName.value.trim()) {
+      showError('firstName'); valid = false;
+    } else { clearError('firstName'); }
+
+    // Last name
+    if (!lastName.value.trim()) {
+      showError('lastName'); valid = false;
+    } else { clearError('lastName'); }
+
+    // Email
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value);
+    if (!emailOk) {
+      showError('email'); valid = false;
+    } else { clearError('email'); }
+
+    return valid;
+  }
+
+  function showError(id) {
+    document.getElementById(id).classList.add('error');
+    document.getElementById('err-' + id).classList.add('show');
+  }
+
+  function clearError(id) {
+    document.getElementById(id).classList.remove('error');
+    document.getElementById('err-' + id).classList.remove('show');
+  }
+
+  // Clear error on input
+  ['firstName', 'lastName', 'email'].forEach(id => {
+    document.getElementById(id).addEventListener('input', () => clearError(id));
+  });
+
+  // ── Plan selection highlight ──
+  document.querySelectorAll('.plan-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      document.querySelectorAll('.plan-option').forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+    });
+  });
+
+  // ── Fill summary ──
+  function fillSummary() {
+    const first = document.getElementById('firstName').value;
+    const last  = document.getElementById('lastName').value;
+    const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone').value || '—';
+    const plan  = document.querySelector('input[name="plan"]:checked').value;
+    const prices = { Starter: '$9/mo', Pro: '$29/mo', Enterprise: '$79/mo' };
+
+    document.getElementById('sum-name').textContent  = first + ' ' + last;
+    document.getElementById('sum-email').textContent = email;
+    document.getElementById('sum-phone').textContent = phone;
+    document.getElementById('sum-plan').textContent  = plan + ' — ' + prices[plan];
+  }
+
+  // ── Submit ──
+  function submit() {
+    document.getElementById('step-3').classList.remove('active');
+    document.getElementById('progressFill').style.width = '100%';
+    currentStep = 4;
+    document.getElementById('step-4').classList.add('active');
+  }
+
+  // ── Restart ──
+  function restart() {
+    document.getElementById('step-4').classList.remove('active');
+    ['firstName','lastName','email','phone'].forEach(id => {
+      document.getElementById(id).value = '';
+      clearError(id);
+    });
+    document.querySelector('input[name="plan"][value="Starter"]').checked = true;
+    document.querySelectorAll('.plan-option').forEach(o => o.classList.remove('selected'));
+    document.getElementById('plan-starter').classList.add('selected');
+    goTo(1);
+    document.getElementById('step-1').classList.add('active');
+    currentStep = 1;
+  }
+</script>
+</body>
+</html>
