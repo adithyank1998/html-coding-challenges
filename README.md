@@ -2,7 +2,7 @@
 
 > Building one HTML/CSS/JS project every day for 30 days to sharpen frontend skills and grow my GitHub profile.
 
-![Progress](https://img.shields.io/badge/Progress-11%2F30-orange?style=flat-square)
+![Progress](https://img.shields.io/badge/Progress-12%2F30-orange?style=flat-square)
 ![HTML](https://img.shields.io/badge/HTML5-%23E34F26.svg?style=flat-square&logo=html5&logoColor=white)
 ![CSS](https://img.shields.io/badge/CSS3-%231572B6.svg?style=flat-square&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-%23F7DF1E.svg?style=flat-square&logo=javascript&logoColor=black)
@@ -32,7 +32,7 @@ Each project lives in its own folder with a dedicated README and live GitHub Pag
 | 09 | Drag & Drop Todo List | Intermediate | ✅ Todo | [Demo](/Day-09-Drag%20&%20Drop-Todo-List/) |
 | 10 | Animated CSS Loader Pack | Beginner | ✅ Todo | [Demo](/Day-10-Animated-CSS-Loader-Pack/) |
 | 11 | Scroll-Triggered Animations | Intermediate | ✅ Todo | [Demo](/Day-11-Scroll-Triggered-Animations/) |
-| 12 | Multi-Step Form | Intermediate | ⬜ Todo | [Demo](#) |
+| 12 | Multi-Step Form | Intermediate | ✅ Todo | [Demo](/Day-12-Multi-Step-Form/) |
 | 13 | CSS-Only Accordion FAQ | Beginner | ⬜ Todo | [Demo](#) |
 | 14 | Parallax Scrolling Page | Intermediate | ⬜ Todo | [Demo](#) |
 | 15 | Glassmorphism Dashboard | Intermediate | ⬜ Todo | [Demo](#) |
