@@ -1,7 +1,7 @@
 # Day 13 — CSS Only Accordion FAQ
 
-![Preview](preview1.png)
-![Preview](preview2.png)
+![Preview](Preview1.png)
+![Preview](Preview2.png)
 
 
 ## Challenge
