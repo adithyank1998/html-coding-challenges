@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 13 — Accordion FAQ</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #f0f2f5;
+    min-height: 100vh;
+    padding: 60px 24px 80px;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+  }
+
+  .sub {
+    text-align: center;
+    font-size: 14px;
+    color: #999;
+    margin-bottom: 48px;
+  }
+
+  /* ── Accordion wrapper ── */
+  .accordion {
+    max-width: 680px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* ── Each item uses a hidden checkbox ── */
+  .accordion input[type="checkbox"] {
+    display: none;
+  }
+
+  /* ── Item card ── */
+  .accordion-item {
+    background: #fff;
+    border-radius: 14px;
+    border: 2px solid #f0f0f0;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  /* When open, highlight the card */
+  .accordion input:checked ~ .accordion-item {
+    border-color: #000000;
+    box-shadow: 0 4px 20px rgba(99,102,241,0.10);
+  }
+
+  /* ── Label = the clickable header ── */
+  .accordion-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    cursor: pointer;
+    user-select: none;
+    gap: 16px;
+  }
+
+  .accordion-question {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1a1a;
+    line-height: 1.4;
+    transition: color 0.2s;
+  }
+
+  /* Question turns purple when open */
+  .accordion input:checked ~ .accordion-item .accordion-question {
+    color: #89150a;
+  }
+
+  /* ── Plus / minus icon ── */
+  .accordion-icon {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 2px solid #e0e0e0;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #aaa;
+    transition: all 0.3s;
+  }
+
+  /* Icon turns purple + rotates when open */
+  .accordion input:checked ~ .accordion-item .accordion-icon {
+    background: #000000;
+    border-color: #000000;
+    color: #fff;
+    transform: rotate(45deg);
+  }
+
+  /* ── Answer body — the expand/collapse trick ── */
+  .accordion-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s ease;
+  }
+
+  /* When checkbox is checked → expand */
+  .accordion input:checked ~ .accordion-item .accordion-body {
+    max-height: 300px;
+  }
+
+  .accordion-answer {
+    padding: 0 24px 20px;
+    font-size: 14px;
+    color: #666;
+    line-height: 1.8;
+    border-top: 1px solid #f5f5f5;
+    padding-top: 16px;
+  }
+
+  /* ── Day badge ── */
+  .day-badge {
+    position: fixed;
+    bottom: 20px; right: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #aaa;
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 6px 14px;
+    border-radius: 20px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Frequently Asked Questions</h1>
+<p class="sub">Click any question to expand the answer — pure CSS, no JavaScript!</p>
+
+<div class="accordion">
+
+  <!-- Item 1 -->
+  <input type="checkbox" id="q1">
+  <div class="accordion-item">
+    <label class="accordion-header" for="q1">
+      <span class="accordion-question">What is this 30-day challenge?</span>
+      <span class="accordion-icon">+</span>
+    </label>
+    <div class="accordion-body">
+      <div class="accordion-answer">
+        The 30-day HTML coding challenge is a self-imposed challenge to build one HTML, CSS, and JavaScript project every single day for 30 days. Each project teaches a new concept and is pushed to GitHub.
+      </div>
+    </div>
+  </div>
+
+  <!-- Item 2 -->
+  <input type="checkbox" id="q2">
+  <div class="accordion-item">
+    <label class="accordion-header" for="q2">
+      <span class="accordion-question">How does a CSS-only accordion work?</span>
+      <span class="accordion-icon">+</span>
+    </label>
+    <div class="accordion-body">
+      <div class="accordion-answer">
+        It uses a hidden <code>&lt;input type="checkbox"&gt;</code> and a <code>&lt;label&gt;</code> that targets it. When the label is clicked, the checkbox toggles. CSS then uses the <code>:checked</code> selector to change the <code>max-height</code> of the answer panel from <code>0</code> to a large value — creating the expand animation.
+      </div>
+    </div>
+  </div>
+
+  <!-- Item 3 -->
+  <input type="checkbox" id="q3">
+  <div class="accordion-item">
+    <label class="accordion-header" for="q3">
+      <span class="accordion-question">Why use max-height instead of height?</span>
+      <span class="accordion-icon">+</span>
+    </label>
+    <div class="accordion-body">
+      <div class="accordion-answer">
+        CSS cannot animate <code>height: auto</code> — it doesn't know what the target value is. But it can animate <code>max-height</code> from <code>0</code> to any fixed value like <code>300px</code>. The content naturally stops at its real height, giving a smooth expand effect.
+      </div>
+    </div>
+  </div>
+
+  <!-- Item 4 -->
+  <input type="checkbox" id="q4">
+  <div class="accordion-item">
+    <label class="accordion-header" for="q4">
+      <span class="accordion-question">Can multiple items be open at once?</span>
+      <span class="accordion-icon">+</span>
+    </label>
+    <div class="accordion-body">
+      <div class="accordion-answer">
+        Yes! Because each item uses an independent <code>checkbox</code>, multiple can be checked at the same time. If you want only one open at a time, switch to <code>input type="radio"</code> with the same <code>name</code> attribute — radio buttons automatically deselect others in the group.
+      </div>
+    </div>
+  </div>
+
+  <!-- Item 5 -->
+  <input type="checkbox" id="q5">
+  <div class="accordion-item">
+    <label class="accordion-header" for="q5">
+      <span class="accordion-question">Do I need JavaScript for this?</span>
+      <span class="accordion-icon">+</span>
+    </label>
+    <div class="accordion-body">
+      <div class="accordion-answer">
+        No! This accordion uses zero JavaScript. The entire interaction — open, close, icon rotation, colour change — is handled by the CSS <code>:checked</code> pseudo-class combined with the adjacent sibling selector <code>~</code>. CSS is more powerful than most people think!
+      </div>
+    </div>
+  </div>
+
+  <!-- Item 6 -->
+  <input type="checkbox" id="q6">
+  <div class="accordion-item">
+    <label class="accordion-header" for="q6">
+      <span class="accordion-question">How do I push each day to GitHub?</span>
+      <span class="accordion-icon">+</span>
+    </label>
+    <div class="accordion-body">
+      <div class="accordion-answer">
+        Simple three-step process: <code>git add .</code> to stage your files, <code>git commit -m "Day XX — Title ✅"</code> to save them, then <code>git push --force</code> to upload to GitHub. GitHub Pages then makes it live automatically at your Pages URL.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="day-badge">Day 13 / 30</div>
+
+</body>
+</html>
