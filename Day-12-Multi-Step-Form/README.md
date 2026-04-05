@@ -2,7 +2,6 @@
 
 ![Preview 1](Preview1.png)
 ![Preview 2](Preview2.png)
-![Preview 3](Preview3.png)
 
 ## Challenge
 
