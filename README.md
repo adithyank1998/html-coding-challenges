@@ -34,7 +34,7 @@ Each project lives in its own folder with a dedicated README and live GitHub Pag
 | 11 | Scroll-Triggered Animations | Intermediate | ✅ Todo | [Demo](/Day-11-Scroll-Triggered-Animations/) |
 | 12 | Multi-Step Form | Intermediate | ✅ Todo | [Demo](/Day-12-Multi-Step-Form/) |
 | 13 | CSS-Only Accordion FAQ | Beginner | ✅ Todo | [Demo](/Day-13-CSS-Only-Accordion-FAQ/) |
-| 14 | Parallax Scrolling Page | Intermediate | ⬜ Todo | [Demo](#) |
+| 14 | Parallax Scrolling Page | Intermediate | ✅ Todo | [Demo](/Day-14-Parallax-Scrolling-Page/) |
 | 15 | Glassmorphism Dashboard | Intermediate | ⬜ Todo | [Demo](#) |
 | 16 | Animated SVG Icon Set | Intermediate | ⬜ Todo | [Demo](#) |
 | 17 | Real-Time Character Counter | Beginner | ⬜ Todo | [Demo](#) |
