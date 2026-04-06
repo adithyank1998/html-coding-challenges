@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 14 — Parallax Scrolling</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #0f0f0f;
+    color: #fff;
+    overflow-x: hidden;
+  }
+
+  /* ── Navbar ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    background: rgba(15,15,15,0.7);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  /* ══════════════════════
+     PARALLAX SECTIONS
+     Each section is full-height.
+     The background moves slower than scroll.
+  ══════════════════════ */
+
+  .parallax-section {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  /* ── Parallax background layer ── */
+  .parallax-bg {
+    position: absolute;
+    inset: -30%;          /* oversized so it can scroll without gaps */
+    background-size: cover;
+    background-position: center;
+    will-change: transform; /* tells browser to GPU-accelerate this */
+  }
+
+  /* Dark overlay on top of bg */
+  .parallax-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+  }
+
+  /* Content sits above bg + overlay */
+  .parallax-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 0 24px;
+    max-width: 800px;
+  }
+
+  .section-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 5px 16px;
+    border-radius: 100px;
+    margin-bottom: 24px;
+  }
+
+  .parallax-content h1 {
+    font-size: clamp(2.4rem, 7vw, 5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+  }
+
+  .parallax-content p {
+    font-size: clamp(14px, 2vw, 17px);
+    color: rgba(255,255,255,0.75);
+    line-height: 1.8;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  /* Accent colours per section */
+  .accent-blue  { color: #60a5fa; }
+  .accent-green { color: #34d399; }
+  .accent-pink  { color: #f472b6; }
+  .accent-amber { color: #fbbf24; }
+
+  /* Section backgrounds */
+  .bg-1 { background: linear-gradient(135deg, #1e3a5f, #0f2027); }
+  .bg-2 { background: linear-gradient(135deg, #064e3b, #022c22); }
+  .bg-3 { background: linear-gradient(135deg, #4a044e, #1a001c); }
+  .bg-4 { background: linear-gradient(135deg, #78350f, #1c0a00); }
+
+  /* ── Normal content section (no parallax) ── */
+  .content-section {
+    background: #1a1a1a;
+    padding: 100px 24px;
+    text-align: center;
+  }
+
+  .content-section h2 {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .content-section p {
+    font-size: 15px;
+    color: #888;
+    max-width: 540px;
+    margin: 0 auto 48px;
+    line-height: 1.8;
+  }
+
+  .cards-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .info-card {
+    background: #222;
+    border-radius: 16px;
+    padding: 32px 24px;
+    border: 1px solid #333;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .info-card:hover {
+    border-color: #555;
+    transform: translateY(-4px);
+  }
+
+  .info-card .icon { font-size: 2rem; margin-bottom: 14px; display: block; }
+  .info-card h3   { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+  .info-card p    { font-size: 13px; color: #666; line-height: 1.7; }
+
+  /* ── Scroll indicator ── */
+  .scroll-indicator {
+    position: absolute;
+    bottom: 32px; left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    z-index: 3;
+    animation: scrollBounce 1.8s ease-in-out infinite;
+  }
+
+  .scroll-indicator span { font-size: 18px; }
+
+  @keyframes scrollBounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50%       { transform: translateX(-50%) translateY(10px); }
+  }
+
+  /* ── Day badge ── */
+  .day-badge {
+    position: fixed;
+    bottom: 20px; right: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 6px 14px;
+    border-radius: 20px;
+    z-index: 200;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .cards-row { grid-template-columns: 1fr; max-width: 360px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>Day 14 / 30 — Parallax Scrolling</nav>
+
+<!-- ══ SECTION 1 — Hero ══ -->
+<div class="parallax-section">
+  <div class="parallax-bg bg-1" data-speed="0.4" id="bg1"></div>
+  <div class="parallax-overlay"></div>
+  <div class="parallax-content">
+    <div class="section-tag">Scroll Down</div>
+    <h1>Parallax<br><span class="accent-blue">Scrolling</span></h1>
+    <p>The background moves at a different speed than the content — creating an illusion of depth as you scroll.</p>
+  </div>
+  <div class="scroll-indicator">
+    <span>↓</span>
+    scroll
+  </div>
+</div>
+
+<!-- ══ CONTENT SECTION ══ -->
+<div class="content-section">
+  <h2>How Does It Work?</h2>
+  <p>As you scroll, JavaScript reads <code>window.scrollY</code> and moves each background layer at a fraction of that speed using <code>translateY</code>.</p>
+  <div class="cards-row">
+    <div class="info-card">
+      <span class="icon">📜</span>
+      <h3>Read Scroll Position</h3>
+      <p><code>window.scrollY</code> gives the number of pixels scrolled from the top of the page.</p>
+    </div>
+    <div class="info-card">
+      <span class="icon">✖️</span>
+      <h3>Multiply by Speed</h3>
+      <p>Multiply <code>scrollY</code> by a value like <code>0.4</code>. The background moves 40% as fast as you scroll.</p>
+    </div>
+    <div class="info-card">
+      <span class="icon">🎯</span>
+      <h3>Apply with translateY</h3>
+      <p>Set <code>style.transform = translateY(offset + 'px')</code> on the background element every frame.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SECTION 2 ══ -->
+<div class="parallax-section">
+  <div class="parallax-bg bg-2" data-speed="0.3" id="bg2"></div>
+  <div class="parallax-overlay"></div>
+  <div class="parallax-content">
+    <div class="section-tag">Nature</div>
+    <h1>Into the<br><span class="accent-green">Forest</span></h1>
+    <p>Each parallax section has its own background with its own speed value. Lower speed = more depth effect.</p>
+  </div>
+</div>
+
+<!-- ══ SECTION 3 ══ -->
+<div class="parallax-section">
+  <div class="parallax-bg bg-3" data-speed="0.5" id="bg3"></div>
+  <div class="parallax-overlay"></div>
+  <div class="parallax-content">
+    <div class="section-tag">Dream</div>
+    <h1>Lost in<br><span class="accent-pink">Purple</span></h1>
+    <p>Speed 0.5 means the background moves at half the scroll speed. Try different values to feel the difference.</p>
+  </div>
+</div>
+
+<!-- ══ SECTION 4 ══ -->
+<div class="parallax-section">
+  <div class="parallax-bg bg-4" data-speed="0.25" id="bg4"></div>
+  <div class="parallax-overlay"></div>
+  <div class="parallax-content">
+    <div class="section-tag">Warmth</div>
+    <h1>Golden<br><span class="accent-amber">Hour</span></h1>
+    <p>Speed 0.25 — the slowest background here. The slower it moves, the deeper and further away it feels.</p>
+  </div>
+</div>
+
+<div class="day-badge">Day 14 / 30</div>
+
+<script>
+  /*
+    PARALLAX — How it works:
+    1. Get all elements with class .parallax-bg
+    2. Each has a data-speed attribute (e.g. 0.4)
+    3. On every scroll event, calculate:
+         offset = scrollY * speed
+    4. Shift the bg layer up by that offset using translateY
+    5. Because the bg is oversized (inset: -30%), it never shows gaps
+
+    requestAnimationFrame makes it smooth —
+    runs at the screen's refresh rate (usually 60fps)
+  */
+
+  const bgs = document.querySelectorAll('.parallax-bg');
+
+  function updateParallax() {
+    const scrollY = window.scrollY;
+
+    bgs.forEach(bg => {
+      // Get the section this bg belongs to
+      const section = bg.parentElement;
+      const sectionTop = section.offsetTop;
+
+      // How far into this section have we scrolled?
+      const relativeScroll = scrollY - sectionTop;
+
+      // Multiply by speed to get the offset
+      const speed  = parseFloat(bg.dataset.speed) || 0.4;
+      const offset = relativeScroll * speed;
+
+      // Apply the transform
+      bg.style.transform = `translateY(${offset}px)`;
+    });
+  }
+
+  // Listen for scroll
+  window.addEventListener('scroll', () => {
+    requestAnimationFrame(updateParallax);
+  });
+
+  // Run once on load to set initial positions
+  updateParallax();
+</script>
+</body>
+</html>
