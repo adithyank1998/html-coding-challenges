@@ -2,7 +2,7 @@
 
 > Building one HTML/CSS/JS project every day for 30 days to sharpen frontend skills and grow my GitHub profile.
 
-![Progress](https://img.shields.io/badge/Progress-12%2F30-orange?style=flat-square)
+![Progress](https://img.shields.io/badge/Progress-16%2F30-orange?style=flat-square)
 ![HTML](https://img.shields.io/badge/HTML5-%23E34F26.svg?style=flat-square&logo=html5&logoColor=white)
 ![CSS](https://img.shields.io/badge/CSS3-%231572B6.svg?style=flat-square&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-%23F7DF1E.svg?style=flat-square&logo=javascript&logoColor=black)
@@ -36,7 +36,7 @@ Each project lives in its own folder with a dedicated README and live GitHub Pag
 | 13 | CSS-Only Accordion FAQ | Beginner | ✅ Todo | [Demo](/Day-13-CSS-Only-Accordion-FAQ/) |
 | 14 | Parallax Scrolling Page | Intermediate | ✅ Todo | [Demo](/Day-14-Parallax-Scrolling-Page/) |
 | 15 | Glassmorphism Dashboard | Intermediate | ✅ Todo | [Demo](/Day-15-Glassmorphism%20Dashboard/) |
-| 16 | Animated SVG Icon Set | Intermediate | ⬜ Todo | [Demo](#) |
+| 16 | Animated SVG Icon Set | Intermediate | ✅ Todo | [Demo](/Day-16-Animated-SVG-Icon-Set/) |
 | 17 | Real-Time Character Counter | Beginner | ⬜ Todo | [Demo](#) |
 | 18 | CSS Grid Layout Builder | Intermediate | ⬜ Todo | [Demo](#) |
 | 19 | Smooth Page Transition SPA | Advanced | ⬜ Todo | [Demo](#) |

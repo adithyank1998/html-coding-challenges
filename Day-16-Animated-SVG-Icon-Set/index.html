@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 16 — Animated SVG Icons</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #f0f2f5;
+    min-height: 100vh;
+    padding: 48px 24px 80px;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+  }
+
+  .sub {
+    text-align: center;
+    font-size: 14px;
+    color: #999;
+    margin-bottom: 48px;
+  }
+
+  /* ── Grid ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    max-width: 880px;
+    margin: 0 auto;
+  }
+
+  /* ── Icon card ── */
+  .icon-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 32px 20px 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+  }
+
+  .icon-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 28px rgba(0,0,0,0.10);
+  }
+
+  .icon-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #999;
+    letter-spacing: 1px;
+    text-align: center;
+  }
+
+  /* SVG base size */
+  .icon-card svg {
+    width: 52px;
+    height: 52px;
+  }
+
+  /* ════════════════════════════════
+     ICON ANIMATIONS
+     Each icon animates on .icon-card:hover
+  ════════════════════════════════ */
+
+  /* 1. HEART — pulse */
+  .icon-heart {
+    transition: transform 0.2s;
+    transform-origin: center;
+  }
+  .icon-card:hover .icon-heart {
+    animation: heartbeat 0.6s ease infinite;
+  }
+  @keyframes heartbeat {
+    0%,100% { transform: scale(1); }
+    25%      { transform: scale(1.3); }
+    50%      { transform: scale(1); }
+    75%      { transform: scale(1.15); }
+  }
+
+  /* 2. BELL — swing */
+  .icon-bell {
+    transform-origin: top center;
+  }
+  .icon-card:hover .icon-bell {
+    animation: bellSwing 0.5s ease infinite alternate;
+  }
+  @keyframes bellSwing {
+    from { transform: rotate(-18deg); }
+    to   { transform: rotate(18deg); }
+  }
+
+  /* 3. STAR — spin */
+  .icon-star {
+    transform-origin: center;
+  }
+  .icon-card:hover .icon-star {
+    animation: starSpin 0.8s linear infinite;
+  }
+  @keyframes starSpin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* 4. SEARCH — bounce */
+  .icon-search {
+    transform-origin: center;
+  }
+  .icon-card:hover .icon-search {
+    animation: searchBounce 0.5s ease infinite alternate;
+  }
+  @keyframes searchBounce {
+    from { transform: translateY(0) scale(1); }
+    to   { transform: translateY(-5px) scale(1.05); }
+  }
+
+  /* 5. DOWNLOAD arrow — fall */
+  .icon-arrow {
+    transform-origin: center;
+  }
+  .icon-card:hover .icon-arrow {
+    animation: arrowFall 0.5s ease infinite alternate;
+  }
+  @keyframes arrowFall {
+    from { transform: translateY(-4px); }
+    to   { transform: translateY(4px); }
+  }
+
+  /* 6. SETTINGS — rotate */
+  .icon-gear {
+    transform-origin: center;
+  }
+  .icon-card:hover .icon-gear {
+    animation: gearSpin 1.2s linear infinite;
+  }
+  @keyframes gearSpin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* 7. WIFI — pulse waves */
+  .wifi-wave {
+    opacity: 0;
+    transform-origin: bottom center;
+  }
+  .wifi-wave-1 { animation: wifiPulse 1.5s ease infinite 0s; }
+  .wifi-wave-2 { animation: wifiPulse 1.5s ease infinite 0.3s; }
+  .wifi-wave-3 { animation: wifiPulse 1.5s ease infinite 0.6s; }
+  .icon-card:not(:hover) .wifi-wave { animation-play-state: paused; opacity: 0.25; }
+  .icon-card:hover .wifi-wave { animation-play-state: running; }
+  @keyframes wifiPulse {
+    0%   { opacity: 0; }
+    50%  { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  /* 8. SEND — fly right */
+  .icon-send {
+    transform-origin: center;
+  }
+  .icon-card:hover .icon-send {
+    animation: sendFly 0.5s ease infinite alternate;
+  }
+  @keyframes sendFly {
+    from { transform: translate(0, 0) rotate(-8deg); }
+    to   { transform: translate(6px, -6px) rotate(-8deg); }
+  }
+
+  /* 9. TRASH — shake */
+  .icon-trash {
+    transform-origin: center bottom;
+  }
+  .icon-card:hover .icon-trash {
+    animation: trashShake 0.4s ease infinite;
+  }
+  @keyframes trashShake {
+    0%,100% { transform: rotate(0); }
+    25%      { transform: rotate(-8deg); }
+    75%      { transform: rotate(8deg); }
+  }
+
+  /* 10. LOCK — unlock bounce */
+  .icon-shackle {
+    transform-origin: right bottom;
+    transition: transform 0.3s;
+  }
+  .icon-card:hover .icon-shackle {
+    animation: unlockBounce 0.6s ease forwards;
+  }
+  @keyframes unlockBounce {
+    0%   { transform: rotate(0); }
+    50%  { transform: rotate(-30deg) translateX(3px); }
+    100% { transform: rotate(-30deg) translateX(3px); }
+  }
+
+  /* 11. HOME — pop */
+  .icon-home {
+    transform-origin: center;
+  }
+  .icon-card:hover .icon-home {
+    animation: homePop 0.4s cubic-bezier(0.36,0.07,0.19,0.97) both;
+  }
+  @keyframes homePop {
+    0%   { transform: scale(1); }
+    30%  { transform: scale(1.25); }
+    60%  { transform: scale(0.92); }
+    100% { transform: scale(1); }
+  }
+
+  /* 12. LIKE / THUMBS UP — bounce up */
+  .icon-thumb {
+    transform-origin: bottom center;
+  }
+  .icon-card:hover .icon-thumb {
+    animation: thumbUp 0.5s ease infinite alternate;
+  }
+  @keyframes thumbUp {
+    from { transform: translateY(0) rotate(0); }
+    to   { transform: translateY(-6px) rotate(5deg); }
+  }
+
+  /* ── Day badge ── */
+  .day-badge {
+    position: fixed;
+    bottom: 20px; right: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #aaa;
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 6px 14px;
+    border-radius: 20px;
+  }
+
+  @media (max-width: 700px) {
+    .grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 480px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<h1>Animated SVG Icons</h1>
+<p class="sub">Hover over any icon to see its animation</p>
+
+<div class="grid">
+
+  <!-- 1. Heart -->
+  <div class="icon-card">
+    <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path class="icon-heart" d="M26 42s-18-11-18-23a10 10 0 0 1 18-6 10 10 0 0 1 18 6c0 12-18 23-18 23z"
+        fill="#f87171" stroke="#ef4444" stroke-width="1.5"/>
+    </svg>
+    <span class="icon-name">Heart</span>
+  </div>
+
+  <!-- 2. Bell -->
+  <div class="icon-card">
+    <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g class="icon-bell">
+        <path d="M26 8a14 14 0 0 1 14 14v8l4 4H8l4-4v-8A14 14 0 0 1 26 8z"
+          fill="#fbbf24" stroke="#d97706" stroke-width="1.5"/>
+        <path d="M22 40a4 4 0 0 0 8 0" stroke="#d97706" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      </g>
+      <circle cx="26" cy="9" r="2" fill="#d97706"/>
+    </svg>
+    <span class="icon-name">Bell</span>
+  </div>
+
+  <!-- 3. Star -->
+  <div class="icon-card">
+    <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon class="icon-star"
+        points="26,8 30.5,20.5 44,20.5 33.5,28.5 37.5,41 26,33 14.5,41 18.5,28.5 8,20.5 21.5,20.5"
+        fill="#a78bfa" stroke="#7c3aed" stroke-width="1.5" stroke-linejoin="round"/>
+    </svg>
+    <span class="icon-name">Star</span>
+  </div>
+
+  <!-- 4. Search -->
+  <div class="icon-card">
+    <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g class="icon-search">
+        <circle cx="22" cy="22" r="12" stroke="#6366f1" stroke-width="2.5"/>
+        <line x1="31" y1="31" x2="43" y2="43" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round"/>
+      </g>
+    </svg>
+    <span class="icon-name">Search</span>
+  </div>
+
+  <!-- 5. Download -->
+  <div class="icon-card">
+    <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="38" width="32" height="4" rx="2" fill="#34d399"/>
+      <g class="icon-arrow">
+        <line x1="26" y1="10" x2="26" y2="33" stroke="#34d399" stroke-width="2.5" stroke-linecap="round"/>
+        <polyline points="16,24 26,34 36,24" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </g>
+    </svg>
+    <span class="icon-name">Download</span>
+  </div>
+
+  <!-- 6. Settings -->
+  <div class="icon-card">
+    <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g class="icon-gear">
+        <circle cx="26" cy="26" r="7" stroke="#64748b" stroke-width="2.5"/>
+        <path d="M26 10v4M26 38v4M10 26h4M38 26h4
+                 M15.5 15.5l2.8 2.8M33.7 33.7l2.8 2.8
+                 M15.5 36.5l2.8-2.8M33.7 18.3l2.8-2.8"
+          stroke="#64748b" stroke-width="2.5" stroke-linecap="round"/>
+      </g>
+    </svg>
+    <span class="icon-name">Settings</span>
+  </div>
+
+  <!-- 7. Wifi -->
+  <div class="icon-card">
+    <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path class="wifi-wave wifi-wave-3"
+        d="M6 20 Q26 4 46 20" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+      <path class="wifi-wave wifi-wave-2"
+        d="M12 28 Q26 16 40 28" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+      <path class="wifi-wave wifi-wave-1"
+        d="M18 36 Q26 28 34 36" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+      <circle cx="26" cy="43" r="3" fill="#38bdf8"/>
+    </svg>
+    <span class="icon-name">Wifi</span>
+  </div>
+
+  <!-- 8. Send -->
+  <div class="icon-card">
+    <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g class="icon-send">
+        <polygon points="8,8 44,26 8,44 14,26" fill="#fb923c" stroke="#ea580c" stroke-width="1.5" stroke-linejoin="round"/>
+        <line x1="14" y1="26" x2="28" y2="26" stroke="#ea580c" stroke-width="1.5" stroke-linecap="round"/>
+      </g>
+    </svg>
+    <span class="icon-name">Send</span>
+  </div>
+
+  <!-- 9. Trash -->
+  <div class="icon-card">
+    <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g class="icon-trash">
+        <rect x="14" y="16" width="24" height="26" rx="3" stroke="#f87171" stroke-width="2" fill="none"/>
+        <line x1="10" y1="16" x2="42" y2="16" stroke="#f87171" stroke-width="2" stroke-linecap="round"/>
+        <rect x="20" y="10" width="12" height="6" rx="2" stroke="#f87171" stroke-width="2" fill="none"/>
+        <line x1="21" y1="23" x2="21" y2="36" stroke="#f87171" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="26" y1="23" x2="26" y2="36" stroke="#f87171" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="31" y1="23" x2="31" y2="36" stroke="#f87171" stroke-width="1.5" stroke-linecap="round"/>
+      </g>
+    </svg>
+    <span class="icon-name">Trash</span>
+  </div>
+
+  <!-- 10. Lock -->
+  <div class="icon-card">
+    <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="12" y="24" width="28" height="20" rx="4" fill="#c084fc" stroke="#9333ea" stroke-width="1.5"/>
+      <path class="icon-shackle" d="M18 24v-8a8 8 0 0 1 16 0v8"
+        stroke="#9333ea" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+      <circle cx="26" cy="34" r="3" fill="#9333ea"/>
+    </svg>
+    <span class="icon-name">Lock</span>
+  </div>
+
+  <!-- 11. Home -->
+  <div class="icon-card">
+    <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g class="icon-home">
+        <polygon points="26,8 44,26 38,26 38,44 14,44 14,26 8,26"
+          fill="#34d399" stroke="#059669" stroke-width="1.5" stroke-linejoin="round"/>
+        <rect x="21" y="32" width="10" height="12" rx="1" fill="#fff" opacity="0.6"/>
+      </g>
+    </svg>
+    <span class="icon-name">Home</span>
+  </div>
+
+  <!-- 12. Thumbs Up -->
+  <div class="icon-card">
+    <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g class="icon-thumb">
+        <path d="M20 44H12a2 2 0 0 1-2-2V26a2 2 0 0 1 2-2h8"
+          stroke="#6366f1" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M20 26l6-16a6 6 0 0 1 6 6v6h8a4 4 0 0 1 4 4l-3 12a4 4 0 0 1-4 4H20V26z"
+          fill="#818cf8" stroke="#6366f1" stroke-width="1.5" stroke-linejoin="round"/>
+      </g>
+    </svg>
+    <span class="icon-name">Like</span>
+  </div>
+
+</div>
+
+<div class="day-badge">Day 16 / 30</div>
+
+</body>
+</html>
