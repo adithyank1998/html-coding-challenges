@@ -1,6 +1,6 @@
 # Day 15 — Glassmorphism Dashboard
 
-![Preview](preview.png)
+![Preview](Preview.png)
 
 ## Challenge
 
