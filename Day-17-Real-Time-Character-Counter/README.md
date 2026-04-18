@@ -1,6 +1,6 @@
 # Day 17 — Real-Time Character Counter
 
-![Preview](preview.png)
+![Preview](Preview.png)
 
 ## Challenge
 
