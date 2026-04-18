@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 17 — Character Counter</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #f0f2f5;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px 80px;
+  }
+
+  .wrapper {
+    width: 100%;
+    max-width: 580px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+  }
+
+  .sub {
+    text-align: center;
+    font-size: 14px;
+    color: #999;
+    margin-bottom: 8px;
+  }
+
+  /* ── Card ── */
+  .card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+  }
+
+  .card-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #bbb;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .platform-tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 100px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Textarea ── */
+  textarea {
+    width: 100%;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #fafafa;
+    border: 2px solid #e8e8e8;
+    border-radius: 12px;
+    padding: 14px 16px;
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s;
+    height: 130px;
+  }
+
+  textarea:focus { border-color: #6366f1; background: #fff; }
+
+  /* ── Ring counter ── */
+  .counter-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+    gap: 16px;
+  }
+
+  .ring-wrap {
+    position: relative;
+    width: 56px; height: 56px;
+    flex-shrink: 0;
+  }
+
+  .ring-wrap svg {
+    width: 56px; height: 56px;
+    transform: rotate(-90deg);
+  }
+
+  .ring-bg {
+    fill: none;
+    stroke: #f0f0f0;
+    stroke-width: 4;
+  }
+
+  .ring-fill {
+    fill: none;
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-dasharray: 138;   /* circumference = 2π×22 ≈ 138 */
+    stroke-dashoffset: 138;  /* starts empty */
+    transition: stroke-dashoffset 0.3s ease, stroke 0.3s ease;
+  }
+
+  .ring-num {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1;
+  }
+
+  /* Stats */
+  .stats {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stat-num {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1;
+  }
+
+  .stat-lbl {
+    font-size: 11px;
+    color: #bbb;
+    font-weight: 500;
+    margin-top: 2px;
+  }
+
+  /* ── Progress bar under textarea ── */
+  .progress-track {
+    height: 5px;
+    background: #f0f0f0;
+    border-radius: 100px;
+    overflow: hidden;
+    margin-top: 10px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 100px;
+    transition: width 0.2s ease, background 0.2s ease;
+    width: 0%;
+    background: #05050b;
+  }
+
+  /* Limit warning */
+  .limit-msg {
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 8px;
+    min-height: 18px;
+    transition: color 0.2s;
+  }
+
+  /* ── Platform presets ── */
+  .presets {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .preset-btn {
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 13px 16px;
+    border-radius: 12px;
+    border: 2px solid #e8e8e8;
+    background: #fff;
+    color: #555;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s;
+  }
+
+  .preset-btn:hover {
+    border-color: #000000;
+    color: #000000;
+  }
+
+  .preset-btn.active {
+    background: #05050b;
+    border-color: #000000;
+    color: #fff;
+  }
+
+  .preset-limit {
+    font-size: 11px;
+    font-weight: 500;
+    opacity: 0.65;
+  }
+
+  /* ── Clear button ── */
+  .clear-btn {
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 22px;
+    border-radius: 10px;
+    border: 2px solid #e8e8e8;
+    background: #fff;
+    color: #aaa;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  .clear-btn:hover { border-color: #f87171; color: #f87171; }
+
+  /* ── Day badge ── */
+  .day-badge {
+    position: fixed;
+    bottom: 20px; right: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #aaa;
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 6px 14px;
+    border-radius: 20px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+  <div>
+    <h1>Character Counter</h1>
+    <p class="sub">Real-time stats as you type</p>
+  </div>
+
+  <!-- Main textarea card -->
+  <div class="card">
+    <div class="card-label">
+      <span>Your Text</span>
+      <span class="platform-tag" id="platformTag"
+        style="background:#ede9fe; color:#6366f1;">No Limit</span>
+    </div>
+
+    <textarea id="mainText" placeholder="Start typing here..."></textarea>
+
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="limit-msg" id="limitMsg"></div>
+
+    <div class="counter-row">
+      <!-- Ring -->
+      <div class="ring-wrap">
+        <svg viewBox="0 0 56 56">
+          <circle class="ring-bg" cx="28" cy="28" r="22"/>
+          <circle class="ring-fill" id="ringFill" cx="28" cy="28" r="22"/>
+        </svg>
+        <div class="ring-num" id="ringNum">0%</div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats">
+        <div class="stat-item">
+          <span class="stat-num" id="charCount">0</span>
+          <span class="stat-lbl">Characters</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" id="wordCount">0</span>
+          <span class="stat-lbl">Words</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" id="lineCount">1</span>
+          <span class="stat-lbl">Lines</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" id="readTime">0s</span>
+          <span class="stat-lbl">Read Time</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Platform presets -->
+  <div class="card">
+    <div class="card-label" style="margin-bottom:14px">Platform Limits</div>
+    <div class="presets">
+      <button class="preset-btn" data-limit="0" data-name="No Limit" data-color="#6366f1" data-bg="#ede9fe"
+        onclick="setPreset(this)">
+        No Limit <span class="preset-limit">∞</span>
+      </button>
+      <button class="preset-btn" data-limit="280" data-name="Twitter / X" data-color="#1d9bf0" data-bg="#dbeafe"
+        onclick="setPreset(this)">
+        Twitter / X <span class="preset-limit">280</span>
+      </button>
+      <button class="preset-btn" data-limit="2200" data-name="Instagram" data-color="#e1306c" data-bg="#fce7f3"
+        onclick="setPreset(this)">
+        Instagram <span class="preset-limit">2,200</span>
+      </button>
+      <button class="preset-btn" data-limit="500" data-name="LinkedIn" data-color="#0077b5" data-bg="#dbeafe"
+        onclick="setPreset(this)">
+        LinkedIn Post <span class="preset-limit">500</span>
+      </button>
+    </div>
+  </div>
+
+  <button class="clear-btn" onclick="clearText()">✕ Clear Text</button>
+
+</div>
+
+<div class="day-badge">Day 17 / 30</div>
+
+<script>
+  const textarea     = document.getElementById('mainText');
+  const charCountEl  = document.getElementById('charCount');
+  const wordCountEl  = document.getElementById('wordCount');
+  const lineCountEl  = document.getElementById('lineCount');
+  const readTimeEl   = document.getElementById('readTime');
+  const progressFill = document.getElementById('progressFill');
+  const limitMsg     = document.getElementById('limitMsg');
+  const ringFill     = document.getElementById('ringFill');
+  const ringNum      = document.getElementById('ringNum');
+  const platformTag  = document.getElementById('platformTag');
+
+  const CIRCUMFERENCE = 138; // 2 * π * 22
+
+  let limit = 0; // 0 = no limit
+
+  // ── Update all stats on every keystroke ──
+  textarea.addEventListener('input', update);
+
+  function update() {
+    const text  = textarea.value;
+    const chars = text.length;
+    const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+    const lines = text.split('\n').length;
+
+    // Read time: avg 200 words per minute
+    const seconds = Math.round((words / 200) * 60);
+    const readStr = seconds < 60
+      ? (seconds + 's')
+      : (Math.ceil(seconds / 60) + 'm');
+
+    // Update stat displays
+    charCountEl.textContent = chars;
+    wordCountEl.textContent = words;
+    lineCountEl.textContent = lines;
+    readTimeEl.textContent  = words === 0 ? '0s' : readStr;
+
+    // Progress bar + ring
+    if (limit > 0) {
+      const pct = Math.min(chars / limit, 1);
+
+      // Colour thresholds
+      let color = '#6366f1';
+      if (pct >= 1)    color = '#ef4444';
+      else if (pct >= 0.9) color = '#f59e0b';
+
+      // Progress bar
+      progressFill.style.width      = (pct * 100) + '%';
+      progressFill.style.background = color;
+
+      // Ring
+      const offset = CIRCUMFERENCE - pct * CIRCUMFERENCE;
+      ringFill.style.strokeDashoffset = offset;
+      ringFill.style.stroke           = color;
+      ringNum.textContent             = Math.round(pct * 100) + '%';
+
+      // Limit message
+      const remaining = limit - chars;
+      if (remaining < 0) {
+        limitMsg.textContent = `${Math.abs(remaining)} over limit`;
+        limitMsg.style.color = '#ef4444';
+        textarea.style.borderColor = '#ef4444';
+      } else if (remaining <= limit * 0.1) {
+        limitMsg.textContent = `${remaining} characters left`;
+        limitMsg.style.color = '#f59e0b';
+        textarea.style.borderColor = '#f59e0b';
+      } else {
+        limitMsg.textContent = `${remaining} characters left`;
+        limitMsg.style.color = '#bbb';
+        textarea.style.borderColor = chars > 0 ? '#6366f1' : '#e8e8e8';
+      }
+    } else {
+      // No limit mode
+      progressFill.style.width = '0%';
+      ringFill.style.strokeDashoffset = CIRCUMFERENCE;
+      ringNum.textContent = '—';
+      limitMsg.textContent = '';
+      textarea.style.borderColor = chars > 0 ? '#6366f1' : '#e8e8e8';
+    }
+  }
+
+  // ── Set platform preset ──
+  function setPreset(btn) {
+    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    limit = parseInt(btn.dataset.limit) || 0;
+    const name  = btn.dataset.name;
+    const color = btn.dataset.color;
+    const bg    = btn.dataset.bg;
+
+    platformTag.textContent        = name;
+    platformTag.style.color        = color;
+    platformTag.style.background   = bg;
+
+    update();
+  }
+
+  // ── Clear ──
+  function clearText() {
+    textarea.value = '';
+    textarea.style.borderColor = '#e8e8e8';
+    update();
+    textarea.focus();
+  }
+</script>
+</body>
+</html>
