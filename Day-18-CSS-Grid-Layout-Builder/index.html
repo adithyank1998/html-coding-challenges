@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 18 — CSS Grid Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Fira+Code&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #f0f2f5;
+    min-height: 100vh;
+    padding: 40px 24px 80px;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 6px;
+  }
+
+  .sub {
+    text-align: center;
+    font-size: 14px;
+    color: #999;
+    margin-bottom: 36px;
+  }
+
+  /* ── Main layout ── */
+  .app {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+    align-items: start;
+  }
+
+  /* ── Controls panel ── */
+  .controls {
+    background: #fff;
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .ctrl-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #bbb;
+    margin-bottom: 10px;
+  }
+
+  /* Number inputs with +/- */
+  .num-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .num-btn {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    border: 2px solid #e8e8e8;
+    background: #fff;
+    font-size: 18px;
+    font-weight: 600;
+    color: #555;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+
+  .num-btn:hover { border-color: #6366f1; color: #6366f1; }
+
+  .num-val {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    min-width: 32px;
+    text-align: center;
+  }
+
+  /* Select dropdowns */
+  select {
+    width: 100%;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 9px 14px;
+    border-radius: 10px;
+    border: 2px solid #e8e8e8;
+    background: #fafafa;
+    color: #1a1a1a;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  select:focus { border-color: #6366f1; }
+
+  /* Gap slider */
+  input[type="range"] {
+    width: 100%;
+    accent-color: #6366f1;
+    cursor: pointer;
+  }
+
+  .range-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .range-val {
+    font-size: 13px;
+    font-weight: 700;
+    color: #6366f1;
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: #f0f0f0;
+  }
+
+  /* Action buttons */
+  .action-btn {
+    width: 100%;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 11px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+
+  .action-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+  .btn-purple { background: #6366f1; color: #fff; }
+  .btn-ghost  { background: #f3f4f6; color: #555; margin-top: 8px; }
+
+  /* ── Preview + code panel ── */
+  .right-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* ── Grid preview ── */
+  .preview-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+
+  .preview-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #bbb;
+    margin-bottom: 16px;
+  }
+
+  .grid-preview {
+    display: grid;
+    min-height: 280px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 12px;
+    border: 2px dashed #e0e0e0;
+    transition: all 0.3s;
+  }
+
+  .grid-cell {
+    background: #6366f1;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    min-height: 60px;
+    transition: background 0.2s, transform 0.2s;
+    cursor: pointer;
+    user-select: none;
+    opacity: 0.85;
+  }
+
+  .grid-cell:hover {
+    opacity: 1;
+    transform: scale(0.97);
+  }
+
+  /* Cell colours cycle */
+  .grid-cell:nth-child(6n+1) { background: #000000; }
+  .grid-cell:nth-child(6n+2) { background: #f59e0b; }
+  .grid-cell:nth-child(6n+3) { background: #10b981; }
+  .grid-cell:nth-child(6n+4) { background: #f87171; }
+  .grid-cell:nth-child(6n+5) { background: #2f025c; }
+  .grid-cell:nth-child(6n+6) { background: #38bdf8; }
+
+  /* ── Code output ── */
+  .code-card {
+    background: #1e1e2e;
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .code-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #555;
+  }
+
+  .copy-btn {
+    font-family: 'Poppins', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 14px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    background: transparent;
+    color: #888;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .copy-btn:hover { border-color: #01010b; color: #000e90; }
+  .copy-btn.copied { border-color: #10b981; color: #10b981; }
+
+  pre {
+    font-family: 'Fira Code', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    color: #a6adc8;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  pre .prop { color: #89b4fa; }
+  pre .val  { color: #a6e3a1; }
+  pre .punc { color: #6c7086; }
+
+  /* ── Day badge ── */
+  .day-badge {
+    position: fixed;
+    bottom: 20px; right: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #aaa;
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 6px 14px;
+    border-radius: 20px;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 800px) {
+    .app { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<h1>CSS Grid Builder</h1>
+<p class="sub">Adjust the controls and see the grid update live</p>
+
+<div class="app">
+
+  <!-- Controls -->
+  <div class="controls">
+
+    <div class="ctrl-group">
+      <label>Columns</label>
+      <div class="num-row">
+        <button class="num-btn" onclick="change('cols', -1)">−</button>
+        <span class="num-val" id="colsVal">3</span>
+        <button class="num-btn" onclick="change('cols', 1)">+</button>
+      </div>
+    </div>
+
+    <div class="ctrl-group">
+      <label>Rows</label>
+      <div class="num-row">
+        <button class="num-btn" onclick="change('rows', -1)">−</button>
+        <span class="num-val" id="rowsVal">2</span>
+        <button class="num-btn" onclick="change('rows', 1)">+</button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="ctrl-group">
+      <label>Column Size</label>
+      <select id="colSize" onchange="render()">
+        <option value="1fr">1fr (equal)</option>
+        <option value="auto">auto</option>
+        <option value="minmax(100px,1fr)">minmax(100px, 1fr)</option>
+        <option value="repeat(auto-fit,minmax(120px,1fr))">auto-fit</option>
+      </select>
+    </div>
+
+    <div class="ctrl-group">
+      <label>Justify Items</label>
+      <select id="justifyItems" onchange="render()">
+        <option value="stretch">stretch</option>
+        <option value="start">start</option>
+        <option value="center">center</option>
+        <option value="end">end</option>
+      </select>
+    </div>
+
+    <div class="ctrl-group">
+      <label>Align Items</label>
+      <select id="alignItems" onchange="render()">
+        <option value="stretch">stretch</option>
+        <option value="start">start</option>
+        <option value="center">center</option>
+        <option value="end">end</option>
+      </select>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="ctrl-group">
+      <div class="range-row">
+        <label style="margin:0">Gap</label>
+        <span class="range-val" id="gapVal">16px</span>
+      </div>
+      <input type="range" id="gapRange" min="0" max="40" value="16" step="4" oninput="updateGap()">
+    </div>
+
+    <div class="divider"></div>
+
+    <button class="action-btn btn-purple" onclick="copyCode()">Copy CSS</button>
+    <button class="action-btn btn-ghost"  onclick="reset()">Reset</button>
+
+  </div>
+
+  <!-- Right panel -->
+  <div class="right-panel">
+
+    <!-- Grid preview -->
+    <div class="preview-card">
+      <div class="preview-title">Live Preview</div>
+      <div class="grid-preview" id="gridPreview"></div>
+    </div>
+
+    <!-- Code output -->
+    <div class="code-card">
+      <div class="code-header">
+        <span class="code-title">Generated CSS</span>
+        <button class="copy-btn" id="copyBtn" onclick="copyCode()">Copy</button>
+      </div>
+      <pre id="codeOutput"></pre>
+    </div>
+
+  </div>
+</div>
+
+<div class="day-badge">Day 18 / 30</div>
+
+<script>
+  let cols = 3;
+  let rows = 2;
+
+  // ── Change cols or rows ──
+  function change(prop, delta) {
+    if (prop === 'cols') {
+      cols = Math.max(1, Math.min(6, cols + delta));
+      document.getElementById('colsVal').textContent = cols;
+    } else {
+      rows = Math.max(1, Math.min(6, rows + delta));
+      document.getElementById('rowsVal').textContent = rows;
+    }
+    render();
+  }
+
+  // ── Update gap display ──
+  function updateGap() {
+    const val = document.getElementById('gapRange').value;
+    document.getElementById('gapVal').textContent = val + 'px';
+    render();
+  }
+
+  // ── Main render function ──
+  function render() {
+    const colSize      = document.getElementById('colSize').value;
+    const justifyItems = document.getElementById('justifyItems').value;
+    const alignItems   = document.getElementById('alignItems').value;
+    const gap          = document.getElementById('gapRange').value + 'px';
+    const total        = cols * rows;
+
+    // Build grid-template-columns value
+    let colsCSS;
+    if (colSize === 'repeat(auto-fit,minmax(120px,1fr))') {
+      colsCSS = 'repeat(auto-fit, minmax(120px, 1fr))';
+    } else {
+      colsCSS = `repeat(${cols}, ${colSize})`;
+    }
+
+    // Apply to preview
+    const preview = document.getElementById('gridPreview');
+    preview.style.gridTemplateColumns = colsCSS;
+    preview.style.gridTemplateRows    = `repeat(${rows}, 1fr)`;
+    preview.style.gap                 = gap;
+    preview.style.justifyItems        = justifyItems;
+    preview.style.alignItems          = alignItems;
+
+    // Rebuild cells
+    preview.innerHTML = '';
+    for (let i = 1; i <= total; i++) {
+      const cell = document.createElement('div');
+      cell.className   = 'grid-cell';
+      cell.textContent = i;
+      preview.appendChild(cell);
+    }
+
+    // Update code
+    updateCode(colsCSS, gap, justifyItems, alignItems);
+  }
+
+  // ── Generate CSS code ──
+  function updateCode(colsCSS, gap, justifyItems, alignItems) {
+    const rows_val = document.getElementById('rowsVal').textContent;
+    const lines = [
+      ['.container', '{'],
+      ['  display', 'grid'],
+      ['  grid-template-columns', colsCSS],
+      ['  grid-template-rows', `repeat(${rows_val}, 1fr)`],
+      ['  gap', gap],
+      ['  justify-items', justifyItems],
+      ['  align-items', alignItems],
+      ['}', ''],
+    ];
+
+    let html = '';
+    lines.forEach(([prop, val]) => {
+      if (prop === '.container' || prop === '}') {
+        html += `<span class="punc">${prop} ${val}</span>\n`;
+      } else {
+        html += `  <span class="prop">${prop}</span><span class="punc">: </span><span class="val">${val}</span><span class="punc">;</span>\n`;
+      }
+    });
+
+    document.getElementById('codeOutput').innerHTML = html;
+  }
+
+  // ── Copy CSS ──
+  function copyCode() {
+    const colSize      = document.getElementById('colSize').value;
+    const justifyItems = document.getElementById('justifyItems').value;
+    const alignItems   = document.getElementById('alignItems').value;
+    const gap          = document.getElementById('gapRange').value + 'px';
+    let colsCSS = colSize === 'repeat(auto-fit,minmax(120px,1fr))'
+      ? 'repeat(auto-fit, minmax(120px, 1fr))'
+      : `repeat(${cols}, ${colSize})`;
+
+    const css = `.container {\n  display: grid;\n  grid-template-columns: ${colsCSS};\n  grid-template-rows: repeat(${rows}, 1fr);\n  gap: ${gap};\n  justify-items: ${justifyItems};\n  align-items: ${alignItems};\n}`;
+
+    navigator.clipboard.writeText(css).then(() => {
+      const btn = document.getElementById('copyBtn');
+      btn.textContent = '✓ Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  // ── Reset ──
+  function reset() {
+    cols = 3; rows = 2;
+    document.getElementById('colsVal').textContent = 3;
+    document.getElementById('rowsVal').textContent = 2;
+    document.getElementById('colSize').value = '1fr';
+    document.getElementById('justifyItems').value = 'stretch';
+    document.getElementById('alignItems').value = 'stretch';
+    document.getElementById('gapRange').value = 16;
+    document.getElementById('gapVal').textContent = '16px';
+    render();
+  }
+
+  // ── Init ──
+  render();
+</script>
+</body>
+</html>
