@@ -1,6 +1,7 @@
 # Day 18 — CSS Grid Layout Builder
 
-![Preview](preview.png)
+![Preview](Preview1.png)
+![Preview](Preview2.png)
 
 ## Challenge
 
