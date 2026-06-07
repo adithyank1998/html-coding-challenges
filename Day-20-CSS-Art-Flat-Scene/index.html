@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 20 — CSS Art</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #1a1a2e;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px 80px;
+    gap: 32px;
+  }
+
+  h1 {
+    color: #fff;
+    font-size: 1.6rem;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .sub {
+    color: rgba(255,255,255,0.4);
+    font-size: 13px;
+    text-align: center;
+    margin-top: 6px;
+  }
+
+  /* ══════════════════════════════
+     SCENE CANVAS
+  ══════════════════════════════ */
+  .scene {
+    position: relative;
+    width: 640px;
+    height: 400px;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+  }
+
+  /* ── SKY ── */
+  .sky {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, #0f2044 0%, #1a3a6e 50%, #f4845f 80%, #f9c06a 100%);
+    transition: background 1s ease;
+  }
+
+  /* Day sky */
+  .scene.day .sky {
+    background: linear-gradient(180deg, #87ceeb 0%, #b0e0ff 60%, #ffd89b 90%, #ffb347 100%);
+  }
+
+  /* ── STARS ── */
+  .stars {
+    position: absolute;
+    inset: 0;
+    opacity: 1;
+    transition: opacity 1s ease;
+  }
+
+  .scene.day .stars { opacity: 0; }
+
+  .star {
+    position: absolute;
+    width: 2px; height: 2px;
+    background: #fff;
+    border-radius: 50%;
+    animation: twinkle 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes twinkle {
+    from { opacity: 0.3; }
+    to   { opacity: 1; }
+  }
+
+  /* ── SUN / MOON ── */
+  .sun-moon {
+    position: absolute;
+    top: 48px; right: 80px;
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    transition: all 1s ease;
+  }
+
+  /* Night = moon */
+  .sun-moon {
+    background: #f5f0dc;
+    box-shadow: 0 0 0 6px rgba(245,240,220,0.15), 0 0 40px rgba(245,240,220,0.2);
+  }
+
+  /* Moon craters */
+  .sun-moon::before {
+    content: '';
+    position: absolute;
+    top: 12px; left: 10px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: rgba(200,190,160,0.5);
+    box-shadow: 18px 10px 0 6px rgba(200,190,160,0.3);
+  }
+
+  /* Day = sun */
+  .scene.day .sun-moon {
+    background: #ffd700;
+    box-shadow: 0 0 0 8px rgba(255,215,0,0.2), 0 0 60px rgba(255,215,0,0.4);
+  }
+
+  .scene.day .sun-moon::before {
+    display: none;
+  }
+
+  /* ── CLOUDS ── */
+  .cloud {
+    position: absolute;
+    opacity: 0;
+    transition: opacity 1s ease;
+  }
+
+  .scene.day .cloud { opacity: 1; }
+
+  .cloud-shape {
+    background: #fff;
+    border-radius: 100px;
+    position: relative;
+  }
+
+  .cloud-shape::before,
+  .cloud-shape::after {
+    content: '';
+    position: absolute;
+    background: #fff;
+    border-radius: 50%;
+  }
+
+  .cloud1 { top: 60px; left: 80px; }
+  .cloud1 .cloud-shape { width: 90px; height: 28px; }
+  .cloud1 .cloud-shape::before { width: 36px; height: 36px; top: -18px; left: 16px; }
+  .cloud1 .cloud-shape::after  { width: 28px; height: 28px; top: -14px; left: 44px; }
+
+  .cloud2 { top: 40px; left: 260px; }
+  .cloud2 .cloud-shape { width: 70px; height: 22px; }
+  .cloud2 .cloud-shape::before { width: 28px; height: 28px; top: -14px; left: 12px; }
+  .cloud2 .cloud-shape::after  { width: 22px; height: 22px; top: -10px; left: 34px; }
+
+  /* Cloud animations */
+  .cloud1 { animation: cloudFloat 8s ease-in-out infinite alternate; }
+  .cloud2 { animation: cloudFloat 6s ease-in-out infinite alternate-reverse; }
+
+  @keyframes cloudFloat {
+    from { transform: translateX(0); }
+    to   { transform: translateX(16px); }
+  }
+
+  /* ── MOUNTAINS ── */
+  .mountains {
+    position: absolute;
+    bottom: 140px; left: 0; right: 0;
+    height: 160px;
+  }
+
+  .mountain {
+    position: absolute;
+    bottom: 0;
+    width: 0; height: 0;
+    border-style: solid;
+  }
+
+  .mountain-1 {
+    border-width: 0 100px 140px 100px;
+    border-color: transparent transparent #2d4a7a transparent;
+    left: 40px;
+  }
+
+  .mountain-2 {
+    border-width: 0 130px 160px 130px;
+    border-color: transparent transparent #1e3a5f transparent;
+    left: 160px;
+  }
+
+  .mountain-3 {
+    border-width: 0 90px 120px 90px;
+    border-color: transparent transparent #2d4a7a transparent;
+    right: 60px;
+  }
+
+  /* Snow caps */
+  .mountain-1::after,
+  .mountain-2::after,
+  .mountain-3::after {
+    content: '';
+    position: absolute;
+    width: 0; height: 0;
+    border-style: solid;
+  }
+
+  .mountain-1::after {
+    border-width: 0 24px 32px 24px;
+    border-color: transparent transparent #e8eef8 transparent;
+    top: -140px; left: -24px;
+  }
+
+  .mountain-2::after {
+    border-width: 0 30px 40px 30px;
+    border-color: transparent transparent #e8eef8 transparent;
+    top: -160px; left: -30px;
+  }
+
+  .mountain-3::after {
+    border-width: 0 22px 30px 22px;
+    border-color: transparent transparent #e8eef8 transparent;
+    top: -120px; left: -22px;
+  }
+
+  /* ── GROUND ── */
+  .ground {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 160px;
+    background: linear-gradient(180deg, #2d5a27 0%, #1a3a15 100%);
+    border-radius: 0 0 24px 24px;
+    transition: background 1s ease;
+  }
+
+  .scene.day .ground {
+    background: linear-gradient(180deg, #4a8a3f 0%, #2d5a27 100%);
+  }
+
+  /* Ground grass bumps */
+  .ground::before {
+    content: '';
+    position: absolute;
+    top: -16px; left: 0; right: 0;
+    height: 32px;
+    background: radial-gradient(ellipse 80px 16px at 10% 100%, #2d5a27 100%, transparent 100%),
+                radial-gradient(ellipse 100px 18px at 35% 100%, #2d5a27 100%, transparent 100%),
+                radial-gradient(ellipse 120px 20px at 65% 100%, #2d5a27 100%, transparent 100%),
+                radial-gradient(ellipse 80px 16px at 88% 100%, #2d5a27 100%, transparent 100%);
+  }
+
+  /* ── PATH ── */
+  .path {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 140px;
+    background: linear-gradient(180deg, #8b7355 0%, #a0856a 100%);
+    clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+  }
+
+  /* ── TREES ── */
+  .tree {
+    position: absolute;
+    bottom: 130px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .tree-top {
+    width: 0; height: 0;
+    border-style: solid;
+    border-width: 0 20px 34px 20px;
+    border-color: transparent transparent #1a4a1a transparent;
+    position: relative;
+    z-index: 2;
+  }
+
+  .tree-top-2 {
+    width: 0; height: 0;
+    border-style: solid;
+    border-width: 0 26px 40px 26px;
+    border-color: transparent transparent #1e5a1e transparent;
+    margin-top: -18px;
+  }
+
+  .tree-trunk {
+    width: 10px; height: 22px;
+    background: #6b4226;
+    border-radius: 2px;
+  }
+
+  .tree1 { left: 60px;  bottom: 136px; transform: scale(0.9); }
+  .tree2 { left: 110px; bottom: 136px; }
+  .tree3 { right: 60px; bottom: 136px; transform: scale(0.85); }
+  .tree4 { right: 108px; bottom: 136px; transform: scale(1.1); }
+
+  /* ── HOUSE ── */
+  .house {
+    position: absolute;
+    bottom: 140px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Roof */
+  .roof {
+    width: 0; height: 0;
+    border-style: solid;
+    border-width: 0 55px 44px 55px;
+    border-color: transparent transparent #8b2020 transparent;
+    position: relative;
+  }
+
+  /* Chimney */
+  .roof::before {
+    content: '';
+    position: absolute;
+    top: -10px; right: -20px;
+    width: 12px; height: 24px;
+    background: #6b1818;
+    border-radius: 2px 2px 0 0;
+  }
+
+  /* Smoke from chimney */
+  .smoke {
+    position: absolute;
+    top: -28px; right: -16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .smoke-puff {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: rgba(200,200,200,0.6);
+    animation: smokeDrift 2s ease-in-out infinite;
+  }
+
+  .smoke-puff:nth-child(2) { animation-delay: 0.6s; width: 8px; height: 8px; }
+  .smoke-puff:nth-child(3) { animation-delay: 1.2s; width: 6px; height: 6px; }
+
+  @keyframes smokeDrift {
+    0%   { transform: translateY(0) translateX(0); opacity: 0.7; }
+    100% { transform: translateY(-20px) translateX(6px); opacity: 0; }
+  }
+
+  /* Walls */
+  .walls {
+    width: 110px;
+    height: 70px;
+    background: #e8d5b0;
+    border: 3px solid #c4a882;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  /* Door */
+  .door {
+    width: 22px; height: 40px;
+    background: #8b4513;
+    border-radius: 11px 11px 0 0;
+    border: 2px solid #6b3410;
+    position: absolute;
+    bottom: 0;
+    left: 50%; transform: translateX(-50%);
+  }
+
+  /* Door knob */
+  .door::after {
+    content: '';
+    position: absolute;
+    right: 4px; top: 50%;
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: #ffd700;
+  }
+
+  /* Windows */
+  .window {
+    position: absolute;
+    width: 22px; height: 22px;
+    background: #ffd89b;
+    border: 2px solid #c4a882;
+    border-radius: 2px;
+    top: 14px;
+  }
+
+  .window::before,
+  .window::after {
+    content: '';
+    position: absolute;
+    background: #c4a882;
+  }
+
+  .window::before { width: 1px; height: 100%; left: 50%; }
+  .window::after  { width: 100%; height: 1px; top: 50%; }
+
+  /* Window glow at night */
+  .window { box-shadow: 0 0 8px rgba(255,216,155,0.5); }
+
+  .scene.day .window {
+    background: #87ceeb;
+    box-shadow: none;
+  }
+
+  .win-left  { left: 14px; }
+  .win-right { right: 14px; }
+
+  /* ── FIREFLIES (night only) ── */
+  .firefly {
+    position: absolute;
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: #ffffa0;
+    box-shadow: 0 0 6px 2px rgba(255,255,160,0.8);
+    opacity: 0;
+    animation: fireflyFloat 3s ease-in-out infinite;
+    transition: opacity 0.5s ease;
+  }
+
+  .scene.day .firefly { display: none; }
+
+  @keyframes fireflyFloat {
+    0%   { opacity: 0; transform: translate(0,0); }
+    25%  { opacity: 1; }
+    50%  { opacity: 0.6; transform: translate(12px, -16px); }
+    75%  { opacity: 1; }
+    100% { opacity: 0; transform: translate(-8px, -24px); }
+  }
+
+  /* ── TOGGLE BUTTON ── */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .toggle-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 1px;
+  }
+
+  .toggle-btn {
+    width: 64px; height: 32px;
+    border-radius: 100px;
+    background: #1e3a5f;
+    border: 2px solid rgba(255,255,255,0.1);
+    cursor: pointer;
+    position: relative;
+    transition: background 0.5s ease;
+  }
+
+  .toggle-btn.day { background: #f59e0b; }
+
+  .toggle-knob {
+    position: absolute;
+    top: 4px; left: 4px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: #f5f0dc;
+    transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), background 0.5s;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+  }
+
+  .toggle-btn.day .toggle-knob {
+    transform: translateX(32px);
+    background: #fff;
+  }
+
+  /* ── Day badge ── */
+  .day-badge {
+    position: fixed;
+    bottom: 20px; right: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 6px 14px;
+    border-radius: 20px;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 680px) {
+    .scene { width: 100%; max-width: 420px; height: 300px; }
+    .mountain-2 { left: 120px; }
+    .tree3, .tree4 { right: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div>
+  <h1>CSS Art — Flat Scene</h1>
+  <p class="sub">Pure CSS illustration — toggle day / night</p>
+</div>
+
+<!-- Scene -->
+<div class="scene" id="scene">
+  <!-- Sky -->
+  <div class="sky"></div>
+
+  <!-- Stars -->
+  <div class="stars" id="stars"></div>
+
+  <!-- Sun / Moon -->
+  <div class="sun-moon"></div>
+
+  <!-- Clouds -->
+  <div class="cloud cloud1"><div class="cloud-shape"></div></div>
+  <div class="cloud cloud2"><div class="cloud-shape"></div></div>
+
+  <!-- Mountains -->
+  <div class="mountains">
+    <div class="mountain mountain-1"></div>
+    <div class="mountain mountain-2"></div>
+    <div class="mountain mountain-3"></div>
+  </div>
+
+  <!-- Ground -->
+  <div class="ground"></div>
+
+  <!-- Path -->
+  <div class="path"></div>
+
+  <!-- Trees -->
+  <div class="tree tree1">
+    <div class="tree-top"></div>
+    <div class="tree-top-2"></div>
+    <div class="tree-trunk"></div>
+  </div>
+  <div class="tree tree2">
+    <div class="tree-top"></div>
+    <div class="tree-top-2"></div>
+    <div class="tree-trunk"></div>
+  </div>
+  <div class="tree tree3">
+    <div class="tree-top"></div>
+    <div class="tree-top-2"></div>
+    <div class="tree-trunk"></div>
+  </div>
+  <div class="tree tree4">
+    <div class="tree-top"></div>
+    <div class="tree-top-2"></div>
+    <div class="tree-trunk"></div>
+  </div>
+
+  <!-- House -->
+  <div class="house">
+    <div class="roof">
+      <div class="smoke">
+        <div class="smoke-puff"></div>
+        <div class="smoke-puff"></div>
+        <div class="smoke-puff"></div>
+      </div>
+    </div>
+    <div class="walls">
+      <div class="window win-left"></div>
+      <div class="window win-right"></div>
+      <div class="door"></div>
+    </div>
+  </div>
+
+  <!-- Fireflies -->
+  <div class="firefly" style="left:15%;bottom:45%;animation-delay:0s"></div>
+  <div class="firefly" style="left:25%;bottom:55%;animation-delay:1s"></div>
+  <div class="firefly" style="right:20%;bottom:48%;animation-delay:0.5s"></div>
+  <div class="firefly" style="right:30%;bottom:60%;animation-delay:1.5s"></div>
+  <div class="firefly" style="left:45%;bottom:52%;animation-delay:2s"></div>
+</div>
+
+<!-- Toggle -->
+<div class="toggle-row">
+  <span class="toggle-label">🌙 Night</span>
+  <button class="toggle-btn" id="toggleBtn" onclick="toggleDayNight()">
+    <div class="toggle-knob">🌙</div>
+  </button>
+  <span class="toggle-label">☀️ Day</span>
+</div>
+
+<div class="day-badge">Day 20 / 30</div>
+
+<script>
+  let isDay = false;
+
+  // Generate random stars
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 60; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.left   = Math.random() * 100 + '%';
+    star.style.top    = Math.random() * 60  + '%';
+    star.style.animationDelay    = Math.random() * 2 + 's';
+    star.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+    star.style.width  = star.style.height = (Math.random() > 0.7 ? '3px' : '2px');
+    starsEl.appendChild(star);
+  }
+
+  function toggleDayNight() {
+    isDay = !isDay;
+    const scene = document.getElementById('scene');
+    const btn   = document.getElementById('toggleBtn');
+    const knob  = btn.querySelector('.toggle-knob');
+
+    scene.classList.toggle('day', isDay);
+    btn.classList.toggle('day', isDay);
+    knob.textContent = isDay ? '☀️' : '🌙';
+  }
+</script>
+</body>
+</html>
