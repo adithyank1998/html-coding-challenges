@@ -1,6 +1,8 @@
 # Day 20 — CSS Art: Flat Scene
 
-![Preview](preview.png)
+![Preview](Preview1.png)
+![Preview](Preview2.png)
+
 
 ## Challenge
 
