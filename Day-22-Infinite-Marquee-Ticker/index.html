@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 22 — Infinite Marquee</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #f0f2f5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 60px 0 80px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+    padding: 0 24px;
+  }
+
+  h1 { font-size: 2rem; font-weight: 700; color: #1a1a1a; margin-bottom: 6px; }
+  .sub { font-size: 14px; color: #999; }
+
+  /* ══════════════════════
+     MARQUEE BASE
+  ══════════════════════ */
+  .marquee-section {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    padding: 12px 0;
+  }
+
+  /* Fade edges */
+  .marquee-section::before,
+  .marquee-section::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 120px;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .marquee-section::before { left: 0;  background: linear-gradient(to right, #f0f2f5, transparent); }
+  .marquee-section::after  { right: 0; background: linear-gradient(to left,  #f0f2f5, transparent); }
+
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: goLeft 22s linear infinite;
+  }
+
+  .marquee-track.reverse { animation: goRight 22s linear infinite; }
+
+  /* Pause on hover */
+  .marquee-section:hover .marquee-track { animation-play-state: paused; }
+
+  @keyframes goLeft  { from { transform: translateX(0); }    to { transform: translateX(-50%); } }
+  @keyframes goRight { from { transform: translateX(-50%); } to { transform: translateX(0); }    }
+
+  /* ── ROW 1: Tech tags ── */
+  .tag-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 22px;
+    margin: 0 8px;
+    background: #fff;
+    border-radius: 100px;
+    border: 1.5px solid #e8e8e8;
+    white-space: nowrap;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+    cursor: default;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .tag-item:hover { border-color: #6366f1; box-shadow: 0 4px 14px rgba(99,102,241,0.12); }
+
+  .tag-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ── ROW 2: Big words (dark band) ── */
+  .dark-band {
+    background: #1a1a1a;
+    width: 100%;
+    padding: 4px 0;
+  }
+
+  .dark-band .marquee-section::before { background: linear-gradient(to right, #1a1a1a, transparent); }
+  .dark-band .marquee-section::after  { background: linear-gradient(to left,  #1a1a1a, transparent); }
+
+  .word-item {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 0 16px;
+    white-space: nowrap;
+  }
+
+  .word-text {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: #fff;
+    text-transform: uppercase;
+  }
+
+  .word-outline {
+    -webkit-text-stroke: 2px #fff;
+    color: transparent;
+  }
+
+  .word-sep { font-size: 2rem; color: #6366f1; font-weight: 800; }
+
+  /* ── ROW 3: Brand chips ── */
+  .brand-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    margin: 0 8px;
+    background: #fff;
+    border-radius: 14px;
+    border: 1.5px solid #e8e8e8;
+    white-space: nowrap;
+    cursor: default;
+    transition: transform 0.2s;
+  }
+
+  .brand-item:hover { transform: scale(1.04); }
+
+  .brand-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  .brand-name { font-size: 13px; font-weight: 700; color: #1a1a1a; }
+  .brand-role { font-size: 11px; color: #999; font-weight: 500; }
+
+  /* ── ROW 4: Quotes ── */
+  .quote-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 22px;
+    margin: 0 8px;
+    background: #fff;
+    border-radius: 14px;
+    border: 1.5px solid #e8e8e8;
+    white-space: nowrap;
+    cursor: default;
+  }
+
+  .q-avatar {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: #f3f4f6;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  .q-text { font-size: 12px; font-weight: 500; color: #444; }
+  .q-name { font-size: 11px; font-weight: 700; color: #aaa; margin-top: 2px; }
+
+  /* Separators */
+  .sep {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #e8e8e8, transparent);
+    margin: 4px 0;
+  }
+
+  /* Day badge */
+  .day-badge {
+    position: fixed;
+    bottom: 20px; right: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #aaa;
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 6px 14px;
+    border-radius: 20px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Infinite Marquee</h1>
+  <p class="sub">Hover any row to pause · 4 different styles</p>
+</div>
+
+<!-- Row 1: Tags → left -->
+<div class="marquee-section">
+  <div class="marquee-track" id="row1"></div>
+</div>
+
+<div class="sep"></div>
+
+<!-- Row 2: Big words → right (dark) -->
+<div class="dark-band">
+  <div class="marquee-section">
+    <div class="marquee-track reverse" id="row2"></div>
+  </div>
+</div>
+
+<div class="sep"></div>
+
+<!-- Row 3: Brands → left -->
+<div class="marquee-section">
+  <div class="marquee-track" id="row3"></div>
+</div>
+
+<div class="sep"></div>
+
+<!-- Row 4: Quotes → right -->
+<div class="marquee-section">
+  <div class="marquee-track reverse" id="row4"></div>
+</div>
+
+<div class="day-badge">Day 22 / 30</div>
+
+<script>
+  /* The trick: duplicate all items so when the first set
+     scrolls off-screen, the identical second set seamlessly
+     takes its place. translateX(-50%) resets to start. */
+
+  const tags = [
+    { label: 'HTML5',      color: '#e34c26' },
+    { label: 'CSS3',       color: '#264de4' },
+    { label: 'JavaScript', color: '#f7df1e' },
+    { label: 'React',      color: '#61dafb' },
+    { label: 'Node.js',    color: '#3c873a' },
+    { label: 'Git',        color: '#f05032' },
+    { label: 'Figma',      color: '#a259ff' },
+    { label: 'Tailwind',   color: '#38bdf8' },
+    { label: 'TypeScript', color: '#3178c6' },
+    { label: 'VS Code',    color: '#007acc' },
+  ];
+
+  const words = ['Build', 'Design', 'Ship', 'Create', 'Code', 'Launch', 'Deploy', 'Learn'];
+
+  const brands = [
+    { icon: '⚡', name: 'Vite',      role: 'Build Tool',      bg: '#646cff22' },
+    { icon: '🎨', name: 'Figma',     role: 'Design',          bg: '#a259ff22' },
+    { icon: '🐙', name: 'GitHub',    role: 'Version Control',  bg: '#33333322' },
+    { icon: '☁️', name: 'Vercel',    role: 'Deployment',       bg: '#00000022' },
+    { icon: '🔥', name: 'Firebase',  role: 'Backend',          bg: '#ffca2822' },
+    { icon: '🎯', name: 'Netlify',   role: 'Hosting',          bg: '#00c7b722' },
+    { icon: '🟣', name: 'Supabase',  role: 'Database',         bg: '#3ecf8e22' },
+    { icon: '💡', name: 'Tailwind',  role: 'Styling',          bg: '#38bdf822' },
+  ];
+
+  const quotes = [
+    { avatar: '👨‍💻', name: 'Adithya K',   text: '"30 days of pure HTML, CSS & JS!"' },
+    { avatar: '🧑‍🎨', name: 'A Designer', text: '"CSS is actually art."' },
+    { avatar: '👩‍💻', name: 'A Dev',       text: '"Shipped every single day."' },
+    { avatar: '🧑‍🏫', name: 'A Mentor',   text: '"Consistency beats talent."' },
+    { avatar: '👨‍🚀', name: 'A Builder',  text: '"One commit at a time."' },
+    { avatar: '🧑‍💼', name: 'A PM',       text: '"Ship it before it\'s perfect."' },
+  ];
+
+  function fill(id, items, renderFn) {
+    const track = document.getElementById(id);
+    // Render twice for seamless loop
+    [0, 1].forEach(() => items.forEach(item => track.appendChild(renderFn(item))));
+  }
+
+  fill('row1', tags, t => {
+    const el = document.createElement('div');
+    el.className = 'tag-item';
+    el.innerHTML = `<span class="tag-dot" style="background:${t.color}"></span>${t.label}`;
+    return el;
+  });
+
+  fill('row2', words, (w, i) => {
+    const el = document.createElement('div');
+    el.className = 'word-item';
+    const isOutline = words.indexOf(w) % 2 !== 0;
+    el.innerHTML = `
+      <span class="word-text ${isOutline ? 'word-outline' : ''}">${w}</span>
+      <span class="word-sep">✦</span>
+    `;
+    return el;
+  });
+
+  fill('row3', brands, b => {
+    const el = document.createElement('div');
+    el.className = 'brand-item';
+    el.innerHTML = `
+      <div class="brand-icon" style="background:${b.bg}">${b.icon}</div>
+      <div>
+        <div class="brand-name">${b.name}</div>
+        <div class="brand-role">${b.role}</div>
+      </div>
+    `;
+    return el;
+  });
+
+  fill('row4', quotes, q => {
+    const el = document.createElement('div');
+    el.className = 'quote-item';
+    el.innerHTML = `
+      <div class="q-avatar">${q.avatar}</div>
+      <div>
+        <div class="q-text">${q.text}</div>
+        <div class="q-name">${q.name}</div>
+      </div>
+    `;
+    return el;
+  });
+</script>
+</body>
+</html>
