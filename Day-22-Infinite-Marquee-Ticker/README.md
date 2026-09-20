@@ -1,6 +1,6 @@
 # Day 22 — Infinite Marquee / Ticker
 
-![Preview](preview.png)
+![Preview](Preview1.png)
 
 ## Challenge
 
