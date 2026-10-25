@@ -1,6 +1,6 @@
 # Day 23 — 3D CSS Cube
 
-![Preview](preview.png)
+![Preview](Preview.png)
 
 ## Challenge
 
