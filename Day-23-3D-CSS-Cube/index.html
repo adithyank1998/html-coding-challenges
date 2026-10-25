@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 23 — 3D CSS Cube</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Fira+Code&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #0f0f1a;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px 80px;
+    gap: 36px;
+  }
+
+  h1 { color: #fff; font-size: 1.8rem; font-weight: 700; text-align: center; }
+  .sub { color: rgba(255,255,255,0.4); font-size: 13px; text-align: center; margin-top: 6px; }
+
+  /* ══════════════════════════
+     3D SCENE
+  ══════════════════════════ */
+  .scene {
+    width: 200px;
+    height: 200px;
+    perspective: 600px;
+    cursor: grab;
+    flex-shrink: 0;
+  }
+
+  .scene:active { cursor: grabbing; }
+
+  .cube {
+    width: 200px;
+    height: 200px;
+    position: relative;
+    transform-style: preserve-3d;
+    animation: autoSpin 8s linear infinite;
+  }
+
+  .cube.paused { animation-play-state: paused; }
+
+  @keyframes autoSpin {
+    from { transform: rotateX(-20deg) rotateY(0deg); }
+    to   { transform: rotateX(-20deg) rotateY(360deg); }
+  }
+
+  /* ── Faces ── */
+  .face {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 8px;
+    border: 2px solid rgba(255,255,255,0.18);
+    border-radius: 10px;
+    font-size: 2.2rem;
+  }
+
+  .face-tag {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.75);
+  }
+
+  /* Each face is pushed out by half the cube size (100px) */
+  .front  { background: rgba(99,102,241,0.8);  transform: translateZ(100px); }
+  .back   { background: rgba(244,114,182,0.8); transform: rotateY(180deg) translateZ(100px); }
+  .left   { background: rgba(52,211,153,0.8);  transform: rotateY(-90deg) translateZ(100px); }
+  .right  { background: rgba(251,191,36,0.8);  transform: rotateY(90deg)  translateZ(100px); }
+  .top    { background: rgba(248,113,113,0.8); transform: rotateX(90deg)  translateZ(100px); }
+  .bottom { background: rgba(192,132,252,0.8); transform: rotateX(-90deg) translateZ(100px); }
+
+  /* ── Controls ── */
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .ctrl-btn {
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 20px;
+    border-radius: 100px;
+    border: 1.5px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.07);
+    color: rgba(255,255,255,0.6);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .ctrl-btn:hover { background: #6366f1; border-color: #6366f1; color: #fff; }
+
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    font-weight: 500;
+  }
+
+  input[type="range"] {
+    width: 120px;
+    accent-color: #6366f1;
+    cursor: pointer;
+  }
+
+  /* ── Code card ── */
+  .code-card {
+    background: #1a1a2e;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px;
+    padding: 22px 26px;
+    width: 100%;
+    max-width: 440px;
+  }
+
+  .code-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #3a3a5a;
+    margin-bottom: 14px;
+  }
+
+  pre {
+    font-family: 'Fira Code', monospace;
+    font-size: 12px;
+    line-height: 1.9;
+    color: #a6adc8;
+    white-space: pre-wrap;
+  }
+
+  pre .kw  { color: #cba6f7; }
+  pre .val { color: #a6e3a1; }
+  pre .cm  { color: #3d3d5c; }
+
+  /* ── Mini cube showcase ── */
+  .showcase {
+    display: flex;
+    gap: 44px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .mini-scene-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .mini-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+  }
+
+  .mini-scene {
+    width: 80px;
+    height: 80px;
+    perspective: 260px;
+  }
+
+  .mini-cube {
+    width: 80px;
+    height: 80px;
+    position: relative;
+    transform-style: preserve-3d;
+    transform: rotateX(-20deg) rotateY(30deg);
+  }
+
+  .slow { animation: autoSpin 14s linear infinite; }
+  .fast { animation: autoSpin 2.5s linear infinite; }
+  .yonly { animation: spinY 6s linear infinite; }
+
+  @keyframes spinY {
+    from { transform: rotateY(0deg); }
+    to   { transform: rotateY(360deg); }
+  }
+
+  .mf { position: absolute; width: 80px; height: 80px; border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; opacity: 0.85; }
+  .f1 { background: rgba(99,102,241,0.8);  transform: translateZ(40px); }
+  .f2 { background: rgba(244,114,182,0.8); transform: rotateY(180deg) translateZ(40px); }
+  .f3 { background: rgba(52,211,153,0.8);  transform: rotateY(-90deg) translateZ(40px); }
+  .f4 { background: rgba(251,191,36,0.8);  transform: rotateY(90deg)  translateZ(40px); }
+  .f5 { background: rgba(248,113,113,0.8); transform: rotateX(90deg)  translateZ(40px); }
+  .f6 { background: rgba(192,132,252,0.8); transform: rotateX(-90deg) translateZ(40px); }
+
+  /* ── Day badge ── */
+  .day-badge {
+    position: fixed;
+    bottom: 20px; right: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 6px 14px;
+    border-radius: 20px;
+  }
+</style>
+</head>
+<body>
+
+<div>
+  <h1>3D CSS Cube</h1>
+  <p class="sub">Drag to rotate · Built with <code>transform-style: preserve-3d</code></p>
+</div>
+
+<!-- Main cube -->
+<div class="scene" id="scene">
+  <div class="cube" id="cube">
+    <div class="face front"> <span>🟣</span> <span class="face-tag">Front</span>  </div>
+    <div class="face back">  <span>🌸</span> <span class="face-tag">Back</span>   </div>
+    <div class="face left">  <span>🟢</span> <span class="face-tag">Left</span>   </div>
+    <div class="face right"> <span>🟡</span> <span class="face-tag">Right</span>  </div>
+    <div class="face top">   <span>🔴</span> <span class="face-tag">Top</span>    </div>
+    <div class="face bottom"><span>💜</span> <span class="face-tag">Bottom</span> </div>
+  </div>
+</div>
+
+<!-- Controls -->
+<div class="btn-row">
+  <button class="ctrl-btn" id="pauseBtn" onclick="togglePause()">⏸ Pause</button>
+  <button class="ctrl-btn" onclick="setSpeed(14)">🐢 Slow</button>
+  <button class="ctrl-btn" onclick="setSpeed(8)">🔄 Normal</button>
+  <button class="ctrl-btn" onclick="setSpeed(3)">⚡ Fast</button>
+</div>
+
+<div class="slider-row">
+  <span>Size</span>
+  <input type="range" id="sizeSlider" min="100" max="260" value="200" oninput="resize(this.value)">
+  <span id="sizeVal">200px</span>
+</div>
+
+<!-- Code -->
+<div class="code-card">
+  <div class="code-title">// How a CSS cube works</div>
+  <pre><span class="cm">/* 1. Enable 3D space on the parent */</span>
+.<span class="kw">cube</span> {
+  transform-style: <span class="val">preserve-3d</span>;
+}
+
+<span class="cm">/* 2. Push each face outward by half the size */</span>
+.<span class="kw">front</span>  { transform: <span class="val">translateZ(100px)</span>; }
+.<span class="kw">back</span>   { transform: <span class="val">rotateY(180deg) translateZ(100px)</span>; }
+.<span class="kw">left</span>   { transform: <span class="val">rotateY(-90deg) translateZ(100px)</span>; }
+.<span class="kw">right</span>  { transform: <span class="val">rotateY(90deg)  translateZ(100px)</span>; }
+.<span class="kw">top</span>    { transform: <span class="val">rotateX(90deg)  translateZ(100px)</span>; }
+.<span class="kw">bottom</span> { transform: <span class="val">rotateX(-90deg) translateZ(100px)</span>; }</pre>
+</div>
+
+<!-- Mini cubes -->
+<div class="showcase">
+  <div class="mini-scene-wrap">
+    <div class="mini-scene"><div class="mini-cube slow">
+      <div class="mf f1"></div><div class="mf f2"></div>
+      <div class="mf f3"></div><div class="mf f4"></div>
+      <div class="mf f5"></div><div class="mf f6"></div>
+    </div></div>
+    <span class="mini-label">Slow</span>
+  </div>
+  <div class="mini-scene-wrap">
+    <div class="mini-scene"><div class="mini-cube fast">
+      <div class="mf f1"></div><div class="mf f2"></div>
+      <div class="mf f3"></div><div class="mf f4"></div>
+      <div class="mf f5"></div><div class="mf f6"></div>
+    </div></div>
+    <span class="mini-label">Fast</span>
+  </div>
+  <div class="mini-scene-wrap">
+    <div class="mini-scene"><div class="mini-cube yonly">
+      <div class="mf f1"></div><div class="mf f2"></div>
+      <div class="mf f3"></div><div class="mf f4"></div>
+      <div class="mf f5"></div><div class="mf f6"></div>
+    </div></div>
+    <span class="mini-label">Y-Axis</span>
+  </div>
+</div>
+
+<div class="day-badge">Day 23 / 30</div>
+
+<script>
+  const cube     = document.getElementById('cube');
+  const pauseBtn = document.getElementById('pauseBtn');
+  let   isPaused = false;
+
+  function togglePause() {
+    isPaused = !isPaused;
+    cube.classList.toggle('paused', isPaused);
+    pauseBtn.textContent = isPaused ? '▶ Play' : '⏸ Pause';
+    if (isPaused) {
+      // Freeze at current rotation
+      const style = window.getComputedStyle(cube);
+      cube.style.animationPlayState = 'paused';
+    }
+  }
+
+  function setSpeed(s) {
+    cube.style.animationDuration = s + 's';
+  }
+
+  function resize(val) {
+    const size = parseInt(val);
+    const half = size / 2;
+    const scene = document.getElementById('scene');
+    scene.style.width  = size + 'px';
+    scene.style.height = size + 'px';
+    cube.style.width   = size + 'px';
+    cube.style.height  = size + 'px';
+
+    document.querySelectorAll('.face').forEach(f => {
+      f.style.width  = size + 'px';
+      f.style.height = size + 'px';
+    });
+
+    cube.querySelector('.front').style.transform  = `translateZ(${half}px)`;
+    cube.querySelector('.back').style.transform   = `rotateY(180deg) translateZ(${half}px)`;
+    cube.querySelector('.left').style.transform   = `rotateY(-90deg) translateZ(${half}px)`;
+    cube.querySelector('.right').style.transform  = `rotateY(90deg) translateZ(${half}px)`;
+    cube.querySelector('.top').style.transform    = `rotateX(90deg) translateZ(${half}px)`;
+    cube.querySelector('.bottom').style.transform = `rotateX(-90deg) translateZ(${half}px)`;
+
+    document.getElementById('sizeVal').textContent = size + 'px';
+  }
+
+  /* ── Drag to rotate ── */
+  let dragging = false;
+  let lastX, lastY, rotX = -20, rotY = 0;
+
+  document.getElementById('scene').addEventListener('mousedown', e => {
+    dragging = true;
+    lastX    = e.clientX;
+    lastY    = e.clientY;
+    cube.style.animation = 'none'; // stop auto-spin while dragging
+  });
+
+  document.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const dx = e.clientX - lastX;
+    const dy = e.clientY - lastY;
+    rotY += dx * 0.5;
+    rotX -= dy * 0.5;
+    cube.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+    lastX = e.clientX;
+    lastY = e.clientY;
+  });
+
+  document.addEventListener('mouseup', () => { dragging = false; });
+
+  // Touch support
+  document.getElementById('scene').addEventListener('touchstart', e => {
+    dragging = true;
+    lastX = e.touches[0].clientX;
+    lastY = e.touches[0].clientY;
+    cube.style.animation = 'none';
+  });
+
+  document.addEventListener('touchmove', e => {
+    if (!dragging) return;
+    const dx = e.touches[0].clientX - lastX;
+    const dy = e.touches[0].clientY - lastY;
+    rotY += dx * 0.5;
+    rotX -= dy * 0.5;
+    cube.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+    lastX = e.touches[0].clientX;
+    lastY = e.touches[0].clientY;
+  });
+
+  document.addEventListener('touchend', () => { dragging = false; });
+</script>
+</body>
+</html>
